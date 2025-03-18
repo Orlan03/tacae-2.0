@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="centered-page">
+  <div class="card custom-card p-4">
+    <div class="card-header text-center bg-transparent border-0">
+      <img src="{% static 'img/tacae.jpg' %}" alt="TACAE Logo" class="logo mb-2">
+      <h3 class="fw-bold">Registrar Nuevo Cobro</h3>
+    </div>
+    <div class="card-body">
+      <form method="POST">
+        {% csrf_token %}
+
+        <!-- Selección de Proceso -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">
+            <i class="fas fa-folder-open text-warning"></i> Seleccionar Proceso
+          </label>
+          <select name="proceso" class="form-select custom-select">
+            {% for carpeta, procesos in carpetas_con_procesos.items %}
+              <optgroup label="📂 {{ carpeta.nombre }}">
+                {% for proceso in procesos %}
+                  <option value="{{ proceso.id }}">📝 {{ proceso.proceso }}</option>
+                {% endfor %}
+              </optgroup>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Valor Cobrado -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">
+            <i class="fas fa-dollar-sign text-success"></i> Valor Cobrado
+          </label>
+          <div class="input-group">
+            <span class="input-group-text custom-input-group-text">$</span>
+            {{ form.cobro }}
+          </div>
+        </div>
+
+        <!-- Observaciones -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">
+            <i class="fas fa-comment text-info"></i> Observaciones
+          </label>
+          {{ form.observacion }}
+        </div>
+
+        <!-- Botones -->
+        <div class="d-flex justify-content-between">
+          <a href="{% url 'carpetas:ver_carpeta' carpeta.id %}" class="btn btn-outline-light custom-btn">
+            ⬅ Volver
+          </a>
+          <button type="submit" class="btn btn-primary custom-btn">
+            💾 Guardar Cobro
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Asegurar que FontAwesome se cargue para iconos -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+  /* Ocupa toda la ventana y centra vertical/horizontal */
+  .centered-page {
+    min-height: 100vh;              /* Ocupa toda la altura de la ventana */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #121212;            /* Fondo oscuro o degradado si deseas */
+  }
+
+  /* Card personalizada */
+  .custom-card {
+    background: #1e1e1e;           /* Fondo gris oscuro */
+    color: #fff;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 500px;              /* Ancho máximo */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+  }
+
+  .card-header {
+    border-bottom: none;
+  }
+  .logo {
+    max-width: 100px;
+    border-radius: 10px;
+  }
+
+  /* Estilos para el select e inputs */
+  .custom-select {
+    background: #2c2c2c;
+    color: #fff;
+    border: 1px solid #555;
+  }
+  .custom-select option {
+    background: #2c2c2c;
+    color: #fff;
+  }
+  input.form-control,
+  textarea.form-control {
+    background: #2c2c2c;
+    color: #fff;
+    border: 1px solid #555;
+  }
+
+  /* Grupo de input para valor */
+  .custom-input-group-text {
+    background: #28a745;
+    color: #fff;
+    border: none;
+  }
+
+  /* Botones personalizados */
+  .custom-btn {
+    border-radius: 5px;
+    font-weight: bold;
+    font-family: inherit;
+  }
+  .btn-outline-light.custom-btn {
+    border-color: #fff;
+    color: #fff;
+  }
+  .btn-outline-light.custom-btn:hover {
+    background: #fff;
+    color: #000;
+  }
+  .btn-primary.custom-btn {
+    background: #007bff;
+    border: none;
+  }
+  .btn-primary.custom-btn:hover {
+    background: #0056b3;
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Registrar CXC</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Registrar</button>
+  </form>
+  <!-- Enlace para volver a la carpeta actual. Se asume que la variable 'carpeta' está en el contexto -->
+  <a href="{% url 'carpetas:ver_carpeta' carpeta_id=carpeta.id %}">Cancelar</a>
+{% endblock %}

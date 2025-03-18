@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Editar Evento - TACAE{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-lg">
+        <div class="card-header bg-warning text-white">
+            <h2>Editar Evento</h2>
+        </div>
+        <div class="card-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-warning">Actualizar Evento</button>
+            </form>
+        </div>
+        <div class="card-footer text-center">
+            <a href="{% url 'eventos:listar_eventos' %}" class="btn btn-secondary">⬅ Volver</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

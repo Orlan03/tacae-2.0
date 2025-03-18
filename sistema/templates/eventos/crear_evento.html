@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Crear Evento - TACAE{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="create-event-card">
+    <div class="card-header">
+      <img src="{% static 'img/tacae.jpg' %}" alt="TACAE Logo" class="logo">
+      <h2>Crear Evento</h2>
+    </div>
+    <div class="card-body">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success btn-submit">Crear Evento</button>
+      </form>
+    </div>
+    <div class="card-footer">
+      <a href="{% url 'eventos:listar_eventos' %}" class="btn btn-secondary btn-back">⬅ Volver</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Fondo de la página: color neutro */
+  body {
+    background: #f7f7f7; /* un gris muy claro */
+  }
+
+  /* Contenedor principal */
+  .container {
+    max-width: 600px;
+    margin: 80px auto;
+    padding: 20px;
+  }
+  /* Tarjeta del formulario con efecto glass */
+  .create-event-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    animation: slideDown 0.6s ease;
+  }
+  /* Encabezado de la tarjeta */
+  .create-event-card .card-header {
+    background: #fff;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+  }
+  .create-event-card .logo {
+    max-width: 80px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+  }
+  .create-event-card .card-header h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: #003366;
+  }
+  /* Cuerpo del formulario */
+  .create-event-card .card-body {
+    padding: 20px;
+    font-size: 1rem;
+    color: #333;
+  }
+  /* Botón de enviar */
+  .create-event-card .btn-submit {
+    width: 100%;
+    padding: 12px;
+    background: #003366;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  .create-event-card .btn-submit:hover {
+    background: #002244;
+  }
+  /* Pie de la tarjeta */
+  .create-event-card .card-footer {
+    background: #f8f9fa;
+    padding: 10px;
+    text-align: center;
+  }
+  .create-event-card .btn-back {
+    color: #003366;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+  }
+  .create-event-card .btn-back:hover {
+    color: #002244;
+  }
+  /* Animación de entrada */
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+{% endblock %}

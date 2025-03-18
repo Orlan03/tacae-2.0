@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Lista de Empleados - TACAE{% endblock %}
+
+{% block content %}
+<div class="container">
+  <header class="header">
+    <div class="logo-container">
+      <img src="{% static 'img/tacae.jpg' %}" alt="TACAE Logo" class="logo">
+      <!-- Botón de Inicio -->
+      <a href="{% url 'home' %}" class="btn-home">Inicio</a>
+    </div>
+    <h1>Lista de Empleados</h1>
+  </header>
+
+  <div class="action-bar">
+    <a href="{% url 'registrar_empleado' %}" class="btn-add">➕ Nuevo Empleado</a>
+  </div>
+
+  {% if empleados %}
+    <div class="table-container">
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Cédula</th>
+            <th>Celular</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for empleado in empleados %}
+          <tr>
+            <td>{{ empleado.nombres }} {{ empleado.apellidos }}</td>
+            <td>{{ empleado.cedula }}</td>
+            <td>{{ empleado.celular }}</td>
+            <td class="action-buttons">
+              <a href="{% url 'eventos:editar_evento' empleado.id %}" class="btn btn-edit">✏️</a>
+              <a href="{% url 'eventos:eliminar_evento' empleado.id %}" class="btn btn-delete" onclick="return confirm('¿Estás seguro de eliminar a este empleado?');">🗑️</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="no-employees">No hay empleados registrados.</p>
+  {% endif %}
+</div>
+
+<style>
+  /* Contenedor general */
+  .container {
+    width: 90%;
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 25px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  }
+  /* Encabezado */
+  .header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+  }
+  .logo-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .logo {
+    width: 80px;
+    border-radius: 4px;
+  }
+  .btn-home {
+    background: #0277bd;
+    color: white;
+    padding: 8px 15px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background 0.3s;
+  }
+  .btn-home:hover {
+    background: #01579b;
+  }
+  h1 {
+    font-size: 24px;
+    margin-top: 10px;
+    color: #222;
+  }
+  /* Botón de agregar */
+  .action-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin: 15px 0;
+  }
+  .btn-add {
+    background: #4CAF50;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+  }
+  .btn-add:hover {
+    background: #45a049;
+  }
+  /* Estilos de la tabla */
+  .table-container {
+    overflow-x: auto;
+  }
+  .modern-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  }
+  .modern-table thead {
+    background: #333;
+    color: white;
+  }
+  .modern-table th, .modern-table td {
+    padding: 14px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+  }
+  .modern-table tbody tr {
+    transition: background 0.3s;
+  }
+  .modern-table tbody tr:hover {
+    background: #f1f1f1;
+  }
+  /* Botones de acción en la tabla */
+  .action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  .btn {
+    display: inline-block;
+    padding: 8px;
+    border-radius: 50%;
+    text-decoration: none;
+    font-size: 18px;
+    transition: all 0.3s ease;
+  }
+  .btn-edit {
+    background: #ffcc00;
+    color: black;
+  }
+  .btn-edit:hover {
+    background: #e6b800;
+  }
+  .btn-delete {
+    background: #d32f2f;
+    color: white;
+  }
+  .btn-delete:hover {
+    background: #c62828;
+  }
+  /* Mensaje si no hay empleados */
+  .no-employees {
+    font-size: 18px;
+    color: #666;
+    margin-top: 20px;
+    text-align: center;
+  }
+</style>
+{% endblock %}

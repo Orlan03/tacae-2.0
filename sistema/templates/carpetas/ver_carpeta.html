@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+{% block title %}📂 {{ carpeta.nombre }} - TACAE{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow-lg">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">📁 {{ carpeta.nombre }}</h4>
+    </div>
+    <div class="card-body">
+
+      <!-- ACCIONES SEGÚN EL TIPO DE CARPETA (general) -->
+      <div class="mb-3">
+        {% if carpeta.nombre != "Control de Procesos" %}
+          <a href="{% url 'carpetas:crear_subcarpeta' carpeta.id %}" class="btn btn-primary">
+            ➕ Crear Subcarpeta
+          </a>
+        {% endif %}
+        {% if carpeta.padre and carpeta.padre.nombre|lower == "cuentas por cobrar" %}
+          <a href="{% url 'procesos:registrar_cuenta_por_cobrar' carpeta.id %}" class="btn btn-success mb-2">
+            ➕ Registrar Cuenta por Cobrar
+          </a>
+        {% endif %}
+        {% if carpeta.padre and carpeta.padre.nombre == "CXC TACAE" %}
+          <a href="{% url 'control_procesos:crear_cxc' carpeta_id=carpeta.id %}" class="btn btn-success">
+            📋 Registrar nuevo CXC
+          </a>
+        {% endif %}
+        {% if carpeta.padre and carpeta.padre.nombre == "Procesos Pendientes" %}
+          <a href="{% url 'procesos:registrar_proceso' carpeta.id %}" class="btn btn-success">
+            📋 Registrar Nuevo Proceso
+          </a>
+        {% endif %}
+      </div>
+
+      <!-- LISTADO DE SUBCARPETAS -->
+      <h4 class="mt-4">📂 Subcarpetas</h4>
+      {% if carpeta.subcarpetas.all %}
+        <ul class="list-group">
+          {% for subcarpeta in carpeta.subcarpetas.all %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <a href="{% url 'carpetas:ver_carpeta' subcarpeta.id %}" class="text-decoration-none">
+                📁 {{ subcarpeta.nombre }}
+              </a>
+              <a href="{% url 'carpetas:eliminar_carpeta' subcarpeta.id %}" class="btn btn-danger btn-sm"
+                 onclick="return confirm('¿Eliminar esta subcarpeta?');">
+                🗑
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-muted">🚫 No hay subcarpetas.</p>
+      {% endif %}
+
+      <!-- LISTADO DE DOCUMENTOS (solo lectura) -->
+      {% if carpeta.nombre not in "Control de Procesos, Procesos Pendientes" %}
+        <h4 class="mt-4">📄 Documentos</h4>
+        {% if carpeta.documentos.all %}
+          <ul class="list-group">
+            {% for documento in carpeta.documentos.all %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="{{ documento.archivo.url }}" target="_blank" class="text-decoration-none">
+                  📄 {{ documento.nombre }}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="text-muted">📂 No hay documentos en esta carpeta.</p>
+        {% endif %}
+      {% endif %}
+
+      <!-- PROCESOS: si el padre es "Procesos Pendientes" -->
+      {% if carpeta.padre and carpeta.padre.nombre == "Procesos Pendientes" %}
+        <h4 class="mt-4">📋 Procesos</h4>
+        {% if carpeta.procesos.all %}
+          <table class="table table-bordered">
+            <thead class="table-dark">
+              <tr>
+                <th>Proceso</th>
+                <th>Responsable</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for proceso in carpeta.procesos.all %}
+                <tr>
+                  <td>{{ proceso.proceso }}</td>
+                  <td>{{ proceso.responsable }}</td>
+                  <td>
+                    <a href="{% url 'control_procesos:listar_procesos' carpeta.id %}" class="btn btn-info btn-sm">🔍 Ver</a>
+                    <a href="{% url 'control_procesos:eliminar_proceso' carpeta.id %}" class="btn btn-danger btn-sm">🗑 Eliminar</a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p class="text-muted">📂 No hay procesos en esta carpeta.</p>
+        {% endif %}
+      {% endif %}
+
+      <!-- CUENTAS POR COBRAR: si el padre es "Cuentas Por Cobrar" -->
+      {% if carpeta.padre and carpeta.padre.nombre|lower == "cuentas por cobrar" %}
+        <h4 class="mt-4">📋 Cuentas por Cobrar</h4>
+        {% if cuentas %}
+          <table class="table table-bordered">
+            <thead class="table-dark">
+              <tr>
+                <th>Fecha</th>
+                <th>Proceso</th>
+                <th>Actor</th>
+                <th>Valor</th>
+                <th>Cobrado</th>
+                <th>Saldo</th>
+                <th>Observación</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for cuenta in cuentas %}
+                <tr>
+                  <td>{{ cuenta.fecha|date:"d/m/Y" }}</td>
+                  <td>{{ cuenta.proceso.proceso }}</td>
+                  <td>{{ cuenta.proceso.responsable }}</td>
+                  <td>${{ cuenta.proceso.valor }}</td>
+                  <td>${{ cuenta.cobro|default:"0.00" }}</td>
+                  <td>${{ cuenta.saldo|default:"0.00" }}</td>
+                  <td>{{ cuenta.observacion|default:"-" }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+            <tfoot>
+              <tr class="table-success">
+                <td colspan="4"><strong>Total:</strong></td>
+                <td><strong>${{ total_cobrado }}</strong></td>
+                <td><strong>${{ total_saldo }}</strong></td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        {% else %}
+          <p class="text-muted">🚫 No hay cuentas por cobrar en esta carpeta.</p>
+        {% endif %}
+      {% endif %}
+
+      <!-- SECCIÓN CXC: si el padre es "CXC TACAE" (en mayúsculas exactas) -->
+      {% if carpeta.padre and carpeta.padre.nombre == "CXC TACAE" %}
+        <h4 class="mt-4">Registros CXC</h4>
+        {% if carpeta.cxcs.all %}
+          <table class="table table-bordered">
+            <thead class="table-dark">
+              <tr>
+                <th>Cliente</th>
+                <th># Factura</th>
+                <th>Fecha</th>
+                <th>Real</th>
+                <th>Observación</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for cxc in carpeta.cxcs.all %}
+                <tr>
+                  <td>{{ cxc.cliente }}</td>
+                  <td>{{ cxc.numero_factura }}</td>
+                  <td>{{ cxc.fecha }}</td>
+                  <td>{{ cxc.real }}</td>
+                  <td>{{ cxc.observacion }}</td>
+                  <td>
+                    <a href="{% url 'control_procesos:editar_cxc' cxc_id=cxc.id %}" class="btn btn-info btn-sm">Editar</a>
+                    <a href="{% url 'control_procesos:eliminar_cxc' cxc_id=cxc.id %}" class="btn btn-danger btn-sm"
+                       onclick="return confirm('¿Estás seguro de que deseas eliminar este registro CXC?');">
+                      Eliminar
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p class="text-muted">No hay registros de CXC en esta carpeta.</p>
+        {% endif %}
+      {% endif %}
+
+      <!-- BOTONES DE NAVEGACIÓN -->
+      <div class="mt-3">
+        {% if carpeta.padre %}
+          <a href="{% url 'carpetas:ver_carpeta' carpeta.padre.id %}" class="btn btn-outline-secondary">⬅ Volver</a>
+        {% endif %}
+        <a href="{% url 'carpetas:listar_carpetas' %}" class="btn btn-outline-primary">🏠 Inicio</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap 5 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

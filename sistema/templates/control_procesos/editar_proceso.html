@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}✏️ Editar Proceso - TACAE{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>✏️ Editar Proceso</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">💾 Guardar Cambios</button>
+        <a href="{% url 'carpetas:ver_carpeta' proceso.carpeta.id %}" class="btn btn-secondary">⬅ Volver</a>
+    </form>
+</div>
+{% endblock %}
