@@ -118,7 +118,42 @@ class RegistroPregunta(models.Model):
     def __str__(self):
         return f"{self.pregunta[:30]}..."
     
+class RegistroClavesSistemas(models.Model):
+    carpeta = models.ForeignKey(
+        Carpeta,
+        on_delete=models.CASCADE,
+        related_name='clavesSistemas'  # Ajusta el related_name según prefieras
+    )
+    compania = models.CharField(max_length=200, blank=True, null=True)
+    canton = models.CharField(max_length=100, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+    clave_mail = models.CharField(max_length=100, blank=True, null=True)
+    fecha_declaracion = models.DateField(blank=True, null=True)
+    declaracion = models.CharField(max_length=100, blank=True, null=True)
+    ruc = models.CharField(max_length=20, blank=True, null=True)
+    clave_sri = models.CharField(max_length=100, blank=True, null=True)
+    clave_super = models.CharField(max_length=100, blank=True, null=True)
+    clave_iess = models.CharField(max_length=100, blank=True, null=True)
+    perito_judicial = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.compania or 'Sin Compañía'} - {self.ruc or 'Sin RUC'}"
     
+    
+class RegistroSistema(models.Model):
+    carpeta = models.ForeignKey(
+        Carpeta,
+        on_delete=models.CASCADE,
+        related_name='sistemasEspeciales'  # Ajusta el related_name a tu gusto
+    )
+    compania = models.CharField(max_length=100, blank=True, null=True)
+    usuario = models.CharField(max_length=100, blank=True, null=True)
+    clave = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.compania or 'Sin Compañía'} - {self.usuario or 'Sin Usuario'}"   
+
+
     
 class Notificacion(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notificaciones_control")

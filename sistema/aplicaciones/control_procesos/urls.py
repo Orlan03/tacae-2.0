@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import registrar_proceso, listar_procesos, listar_carpetas, editar_proceso, eliminar_proceso, registrar_respuesta, listar_respuestas_subcarpeta, listar_respuestas_por_nombre, listar_cuentas_por_cobrar, registrar_cuenta_por_cobrar, crear_cxc_tacae, editar_cxc, eliminar_cxc
-from .views  import crear_firma,editar_firma,eliminar_firma, crear_cuenta_especial, editar_cuenta_especial, eliminar_cuenta_especial, crear_pregunta, editar_pregunta, eliminar_pregunta
+
+
+from .views import *
 app_name = 'control_procesos'
 
 urlpatterns = [
@@ -27,5 +28,12 @@ urlpatterns = [
     path('preguntas/crear/<int:carpeta_id>/', crear_pregunta, name='crear_pregunta'),
     path('preguntas/editar/<int:pregunta_id>/', editar_pregunta, name='editar_pregunta'),
     path('preguntas/eliminar/<int:pregunta_id>/', eliminar_pregunta, name='eliminar_pregunta'),
+    path('claves_sistemas/crear/<int:carpeta_id>/', crear_claves_sistemas, name='crear_claves_sistemas'),
+    path('claves_sistemas/editar/<int:claves_id>/', editar_claves_sistemas, name='editar_claves_sistemas'),
+    path('claves_sistemas/eliminar/<int:claves_id>/', eliminar_claves_sistemas, name='eliminar_claves_sistemas'),
+    path('sistemas/crear/<int:carpeta_id>/', crear_sistema, name='crear_sistema'),
+    path('sistemas/editar/<int:sistema_id>/', editar_sistema, name='editar_sistema'),
+    path('sistemas/eliminar/<int:sistema_id>/', eliminar_sistema, name='eliminar_sistema'),
+    
 ]
     

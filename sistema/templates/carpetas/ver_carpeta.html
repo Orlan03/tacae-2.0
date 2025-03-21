@@ -251,6 +251,97 @@
           <p class="text-muted">No hay registros de CXC.</p>
         {% endif %}
       {% endif %}
+       
+      {% if carpeta.nombre|lower == "sistema" %}
+  <h4 class="mt-4">Sistemas</h4>
+  <a href="{% url 'control_procesos:crear_sistema' carpeta.id %}" class="btn btn-success mb-3">
+    ➕ Registrar Sistema
+  </a>
+
+    {% if carpeta.sistemasEspeciales.all %}
+      <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th>Compañía</th>
+            <th>Usuario</th>
+            <th>Clave</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in carpeta.sistemasEspeciales.all %}
+            <tr>
+              <td>{{ item.compania }}</td>
+              <td>{{ item.usuario }}</td>
+              <td>{{ item.clave }}</td>
+              <td>
+                <a href="{% url 'control_procesos:editar_sistema' item.id %}" class="btn btn-info btn-sm">✏️ Editar</a>
+                <a href="{% url 'control_procesos:eliminar_sistema' item.id %}" class="btn btn-danger btn-sm"
+                  onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?');">
+                  🗑 Eliminar
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="text-muted">No hay registros de Sistemas.</p>
+    {% endif %}
+  {% endif %}
+        {% if carpeta.nombre|lower == "claves" %}
+  <h4 class="mt-4">Claves Sistemas</h4>
+  <a href="{% url 'control_procesos:crear_claves_sistemas' carpeta.id %}" class="btn btn-success mb-3">
+    ➕ Registrar Claves
+  </a>
+
+    {% if carpeta.clavesSistemas.all %}
+      <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th>Compañía</th>
+            <th>Cantón</th>
+            <th>Email</th>
+            <th>Clave mail</th>
+            <th>Fecha Declaración</th>
+            <th>Declaración</th>
+            <th>RUC</th>
+            <th>Clave SRI</th>
+            <th>Clave Super</th>
+            <th>Clave IESS</th>
+            <th>Perito judicial</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in carpeta.clavesSistemas.all %}
+            <tr>
+              <td>{{ item.compania }}</td>
+              <td>{{ item.canton }}</td>
+              <td>{{ item.email }}</td>
+              <td>{{ item.clave_mail }}</td>
+              <td>{{ item.fecha_declaracion|date:"d/m/Y" }}</td>
+              <td>{{ item.declaracion }}</td>
+              <td>{{ item.ruc }}</td>
+              <td>{{ item.clave_sri }}</td>
+              <td>{{ item.clave_super }}</td>
+              <td>{{ item.clave_iess }}</td>
+              <td>{{ item.perito_judicial }}</td>
+              <td>
+                <a href="{% url 'control_procesos:editar_claves_sistemas' item.id %}" class="btn btn-info btn-sm">✏️ Editar</a>
+                <a href="{% url 'control_procesos:eliminar_claves_sistemas' item.id %}" class="btn btn-danger btn-sm"
+                  onclick="return confirm('¿Estás seguro de eliminar este registro?');">
+                  🗑 Eliminar
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="text-muted">No hay registros de Claves Sistemas.</p>
+    {% endif %}
+  {% endif %}
 
       <!-- SECCIÓN DE FIRMAS: Solo se muestra si la carpeta es "Firmas" -->
       {% if carpeta.nombre|lower == "firmas" %}

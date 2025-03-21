@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Proceso, Respuesta, CuentaPorCobrar, CXC, RegistroFirma, RegistroCuenta, RegistroPregunta
+from .models import *
 from aplicaciones.carpetas.models import Carpeta
-from .forms import ProcesoForm, RespuestaForm, CuentaPorCobrarForm, CXCForm, RegistroFirmaForm, RegistroCuentaForm, RegistroPreguntaForm
+from .forms import ProcesoForm, RespuestaForm, CuentaPorCobrarForm, CXCForm, RegistroFirmaForm, RegistroCuentaForm, RegistroPreguntaForm, RegistroClavesSistemasForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
@@ -415,4 +415,92 @@ def eliminar_pregunta(request, pregunta_id):
     return redirect('carpetas:ver_carpeta', carpeta_id=carpeta_id)
 
 
+##################Claves Sistemas ################
 
+
+
+def crear_claves_sistemas(request, carpeta_id):
+    """Crea un nuevo registro de 'Claves Sistemas' en la carpeta especificada."""
+    carpeta = get_object_or_404(Carpeta, id=carpeta_id)
+    if request.method == 'POST':
+        form = RegistroClavesSistemasForm(request.POST)
+        if form.is_valid():
+            registro = form.save(commit=False)
+            registro.carpeta = carpeta
+            registro.save()
+            return redirect('carpetas:ver_carpeta', carpeta_id=carpeta.id)
+    else:
+        form = RegistroClavesSistemasForm()
+    return render(request, 'control_procesos/crear_claves_sistemas.html', {
+        'carpeta': carpeta,
+        'form': form
+    })
+
+def editar_claves_sistemas(request, claves_id):
+    """Edita un registro de 'Claves Sistemas'."""
+    registro = get_object_or_404(RegistroClavesSistemas, id=claves_id)
+    if request.method == 'POST':
+        form = RegistroClavesSistemasForm(request.POST, instance=registro)
+        if form.is_valid():
+            form.save()
+            return redirect('carpetas:ver_carpeta', carpeta_id=registro.carpeta.id)
+    else:
+        form = RegistroClavesSistemasForm(instance=registro)
+    return render(request, 'control_procesos/editar_claves_sistemas.html', {
+        'form': form,
+        'registro': registro
+    })
+
+def eliminar_claves_sistemas(request, claves_id):
+    """Elimina un registro de 'Claves Sistemas'."""
+    registro = get_object_or_404(RegistroClavesSistemas, id=claves_id)
+    carpeta_id = registro.carpeta.id
+    registro.delete()
+    return redirect('carpetas:ver_carpeta', carpeta_id=carpeta_id)
+
+
+###################### sistemas #############################
+
+from django.shortcuts import render, get_object_or_404, redirect
+from aplicaciones.carpetas.models import Carpeta
+from .models import RegistroSistema
+from .forms import RegistroSistemaForm
+
+def crear_sistema(request, carpeta_id):
+    """Crea un nuevo registro de Sistema en la carpeta especificada."""
+    carpeta = get_object_or_404(Carpeta, id=carpeta_id)
+    if request.method == 'POST':
+        form = RegistroSistemaForm(request.POST)
+        if form.is_valid():
+            registro = form.save(commit=False)
+            registro.carpeta = carpeta
+            registro.save()
+            return redirect('carpetas:ver_carpeta', carpeta_id=carpeta.id)
+    else:
+        form = RegistroSistemaForm()
+    return render(request, 'control_procesos/crear_sistema.html', {
+        'carpeta': carpeta,
+        'form': form
+    })
+
+def editar_sistema(request, sistema_id):
+    """Edita un registro de Sistema existente."""
+    registro = get_object_or_404(RegistroSistema, id=sistema_id)
+    if request.method == 'POST':
+        form = RegistroSistemaForm(request.POST, instance=registro)
+        if form.is_valid():
+            form.save()
+            return redirect('carpetas:ver_carpeta', carpeta_id=registro.carpeta.id)
+    else:
+        form = RegistroSistemaForm(instance=registro)
+    return render(request, 'control_procesos/editar_sistema.html', {
+        'form': form,
+        'registro': registro
+    })
+
+def eliminar_sistema(request, sistema_id):
+    """Elimina un registro de Sistema."""
+    registro = get_object_or_404(RegistroSistema, id=sistema_id)
+    carpeta_id = registro.carpeta.id
+    registro.delete()
+    return redirect('carpetas:ver_carpeta', carpeta_id=carpeta_id)

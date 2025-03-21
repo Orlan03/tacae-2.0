@@ -1,6 +1,5 @@
 from django import forms
-from .models import Proceso, Respuesta, CuentaPorCobrar, CXC, RegistroFirma, RegistroCuenta, RegistroPregunta
-
+from .models import *
 class ProcesoForm(forms.ModelForm):
     class Meta:
         model = Proceso
@@ -109,3 +108,29 @@ class RegistroPreguntaForm(forms.ModelForm):
     class Meta:
         model = RegistroPregunta
         fields = ['pregunta', 'respuesta']
+        
+
+
+
+class RegistroClavesSistemasForm(forms.ModelForm):
+    class Meta:
+        model = RegistroClavesSistemas
+        fields = [
+            'compania',
+            'canton',
+            'email',
+            'clave_mail',
+            'fecha_declaracion',
+            'declaracion',
+            'ruc',
+            'clave_sri',
+            'clave_super',
+            'clave_iess',
+            'perito_judicial'
+        ]
+
+
+class RegistroSistemaForm(forms.ModelForm):
+    class Meta:
+        model = RegistroSistema
+        fields = ['compania', 'usuario', 'clave']
