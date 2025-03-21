@@ -1,146 +1,88 @@
-{% extends "base.html" %}
-{% block title %}📋 Lista de Procesos - TACAE{% endblock %}
-
-{% block content %}
-<div class="container">
-    <h2>📋 Lista de Procesos</h2>
-
-    <div class="table-responsive">
-        <table class="table table-striped table-bordered">
-            <thead class="thead-dark">
-                <tr>
-                    <th>📅 Sorteo</th>
-                    <th>📄 Proceso</th>
-                    <th>👤 Responsable</th>
-                    <th>🏢 Actor</th>
-                    <th>⚖️ Demandado</th>
-                    <th>💰 Valor</th>
-                    <th>🏡 Posesión</th>
-                    <th>📝 Calificación</th>
-                    <th>📅 Fecha Cumplimiento</th>
-                    <th>📅 Fecha Límite</th>
-                    <th>📝 Observaciones</th>
-                    <th>🗂️ Carpeta</th>
-                    <th>🔍 Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for proceso in procesos %}
-                <tr>
-                    <td>{{ proceso.sorteo|date:"d/m/Y"|default:"-" }}</td>
-                    <!-- Envolver el nombre del proceso en un enlace que redirige a la vista de la carpeta -->
-                    <td>
-                        <a href="{% url 'carpetas:ver_carpeta' proceso.carpeta.id %}"
-                           style="color: inherit; text-decoration: none;">
-                          {{ proceso.proceso }}
-                        </a>
-                      </td>
-                      
-                    <td>{{ proceso.responsable }}</td>
-                    <td>{{ proceso.actor|default:"-" }}</td>
-                    <td>{{ proceso.demandado|default:"-" }}</td>
-                    <td>${{ proceso.valor|default:"0.00" }}</td>
-                    <td>{{ proceso.posesion|default:"-" }}</td>
-                    <td>{{ proceso.calificacion|default:"-" }}</td>
-                    <td>{{ proceso.fecha_cumplimiento|date:"d/m/Y"|default:"-" }}</td>
-                    <td>{{ proceso.fecha_limite|date:"d/m/Y"|default:"-" }}</td>
-                    <td>{{ proceso.observaciones|default:"-" }}</td>
-                    <td>{{ proceso.carpeta.nombre }}</td>
-                    <td>
-                        <a href="{% url 'procesos:editar_proceso' proceso.id %}" class="btn btn-warning btn-sm">✏️ Editar</a>
-                        <a href="{% url 'procesos:eliminar_proceso' proceso.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este proceso?')">🗑 Eliminar</a>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="13">🚫 No hay procesos registrados.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Botón de volver -->
-    <div class="back-button">
-        <a href="{% url 'carpetas:listar_carpetas' %}" class="btn btn-secondary">⬅ Volver a Carpetas</a>
-    </div>
-</div>
-
-<!-- 🎨 Estilos Mejorados -->
-<style>
-    .container {
-        max-width: 98%;
-        margin: 40px auto;
-        padding: 20px;
-        background: #1E1E1E;
-        color: white;
-        border-radius: 10px;
-        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-        text-align: center;
+<!-- Ejemplo de tabla con diseño personalizado -->
+<div class="table-responsive">
+    <table class="table custom-table">
+      <thead>
+        <tr>
+          <th>📅 Sorteo</th>
+          <th>📄 Proceso</th>
+          <th>👤 Responsable</th>
+          <th>🏢 Actor</th>
+          <th>⚖️ Demandado</th>
+          <th>💰 Valor</th>
+          <th>🏡 Posesión</th>
+          <th>📝 Calificación</th>
+          <th>📅 Fecha Cumplimiento</th>
+          <th>📅 Fecha Límite</th>
+          <th>📝 Observaciones</th>
+          <th>🗂️ Carpeta</th>
+          <th>🔍 Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for proceso in procesos %}
+        <tr>
+          <td>{{ proceso.sorteo|date:"d/m/Y"|default:"-" }}</td>
+          <td>
+            <a href="{% url 'carpetas:ver_carpeta' proceso.carpeta.id %}" style="color: inherit; text-decoration: none;">
+              {{ proceso.proceso }}
+            </a>
+          </td>
+          <td>{{ proceso.responsable }}</td>
+          <td>{{ proceso.actor|default:"-" }}</td>
+          <td>{{ proceso.demandado|default:"-" }}</td>
+          <td>${{ proceso.valor|default:"0.00" }}</td>
+          <td>{{ proceso.posesion|default:"-" }}</td>
+          <td>{{ proceso.calificacion|default:"-" }}</td>
+          <td>{{ proceso.fecha_cumplimiento|date:"d/m/Y"|default:"-" }}</td>
+          <td>{{ proceso.fecha_limite|date:"d/m/Y"|default:"-" }}</td>
+          <td>{{ proceso.observaciones|default:"-" }}</td>
+          <td>{{ proceso.carpeta.nombre }}</td>
+          <td>
+            <a href="{% url 'procesos:editar_proceso' proceso.id %}" class="btn btn-warning btn-sm">✏️ Editar</a>
+            <a href="{% url 'procesos:eliminar_proceso' proceso.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este proceso?')">🗑 Eliminar</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="13">🚫 No hay procesos registrados.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- Estilos personalizados para la tabla -->
+  <style>
+    .custom-table {
+      background-color: #2a2a2a;
+      color: #ddd;
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: 8px;
+      overflow: hidden;
     }
-    h2 {
-        font-size: 24px;
-        color: #007BFF;
-        font-weight: bold;
+    .custom-table thead tr {
+      background: linear-gradient(90deg, #003366, #00509E);
     }
-    .table-responsive {
-        overflow-x: auto;
+    .custom-table thead th {
+      color: #fff;
+      padding: 12px;
+      font-weight: bold;
+      border: none;
     }
-    .table {
-        width: 100%;
-        border-collapse: collapse;
-        background: #222;
-        color: white;
+    .custom-table tbody td {
+      padding: 12px;
+      border-top: 1px solid #444;
     }
-    .table th, .table td {
-        padding: 12px;
-        text-align: center;
-        border-bottom: 1px solid #333;
+    .custom-table tbody tr:hover {
+      background-color: #3a3a3a;
     }
-    .table th {
-        background: #007BFF;
-        color: white;
+    .custom-table a {
+      color: inherit;
+      text-decoration: none;
     }
-    .table tr:hover {
-        background: #444;
+    .custom-table a:hover {
+      text-decoration: underline;
     }
-    .btn-info {
-        background: #17a2b8;
-        color: white;
-        border-radius: 5px;
-        text-decoration: none;
-        padding: 5px 10px;
-    }
-    .btn-warning {
-        background: #ffc107;
-        color: black;
-        border-radius: 5px;
-        text-decoration: none;
-        padding: 5px 10px;
-    }
-    .btn-danger {
-        background: #dc3545;
-        color: white;
-        border-radius: 5px;
-        text-decoration: none;
-        padding: 5px 10px;
-    }
-    .btn-info:hover, .btn-warning:hover, .btn-danger:hover {
-        opacity: 0.8;
-    }
-    .back-button {
-        margin-top: 20px;
-    }
-    .btn-secondary {
-        background: #6c757d;
-        padding: 10px 15px;
-        color: white;
-        border-radius: 5px;
-        text-decoration: none;
-        font-weight: bold;
-    }
-    .btn-secondary:hover {
-        background: #5a6268;
-    }
-</style>
-{% endblock %}
+  </style>
+  

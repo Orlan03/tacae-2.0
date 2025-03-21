@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Registrar Firma - TACAE{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow-lg">
+    <!-- Encabezado de la Tarjeta -->
+    <div class="card-header bg-primary text-white text-center">
+      <h2>Registrar Firma</h2>
+    </div>
+
+    <!-- Cuerpo de la Tarjeta: Formulario -->
+    <div class="card-body">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <!-- Aquí se muestran todos los campos de tu formulario Django -->
+        {{ form.as_p }}
+
+        <!-- Botón para enviar el formulario -->
+        <button type="submit" class="btn btn-success">Registrar</button>
+      </form>
+    </div>
+
+    <!-- Pie de la Tarjeta: Botón Volver -->
+    <div class="card-footer text-center">
+      <a href="{% url 'carpetas:ver_carpeta' carpeta.id %}" class="btn btn-secondary">
+        ⬅ Volver
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

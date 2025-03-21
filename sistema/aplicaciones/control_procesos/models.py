@@ -73,6 +73,53 @@ class CXC(models.Model):
         return f"{self.cliente or 'Sin Cliente'} - {self.numero_factura or 'Sin Factura'}"
 
 
+
+class RegistroFirma(models.Model):
+    carpeta = models.ForeignKey(Carpeta, on_delete=models.CASCADE, related_name='firmas')
+    perito = models.CharField(max_length=100)
+    ruc = models.CharField(max_length=20)
+    clave = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.perito} - {self.ruc}"
+    
+    
+from django.db import models
+from aplicaciones.carpetas.models import Carpeta
+
+class RegistroCuenta(models.Model):
+    carpeta = models.ForeignKey(
+        Carpeta,
+        on_delete=models.CASCADE,
+        related_name='cuentasEspeciales'  # Ajusta el nombre según tu preferencia
+    )
+    compania = models.CharField(max_length=100, blank=True, null=True)
+    institucion_financiera = models.CharField(max_length=150, blank=True, null=True)
+    numero = models.CharField(max_length=50, blank=True, null=True)
+    ruc_ci = models.CharField(max_length=20, blank=True, null=True)
+    usuario = models.CharField(max_length=50, blank=True, null=True)
+    clave_web = models.CharField(max_length=100, blank=True, null=True)
+    clave_cajero = models.CharField(max_length=100, blank=True, null=True)
+    clave_trush = models.CharField(max_length=100, blank=True, null=True)
+    clave_sut = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.compania or 'Sin Compañía'} - {self.institucion_financiera or 'Sin Institución'}"
+
+class RegistroPregunta(models.Model):
+    carpeta = models.ForeignKey(
+        Carpeta,
+        on_delete=models.CASCADE,
+        related_name='preguntasEspeciales'  
+    )
+    pregunta = models.TextField()
+    respuesta = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.pregunta[:30]}..."
+    
+    
+    
 class Notificacion(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notificaciones_control")
     proceso = models.ForeignKey(Proceso, on_delete=models.CASCADE, null=True, blank=True)

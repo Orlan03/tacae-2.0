@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Proceso, Respuesta, CuentaPorCobrar, CXC
+from .models import Proceso, Respuesta, CuentaPorCobrar, CXC, RegistroFirma, RegistroCuenta, RegistroPregunta
 from aplicaciones.carpetas.models import Carpeta
-from .forms import ProcesoForm, RespuestaForm, CuentaPorCobrarForm, CXCForm
+from .forms import ProcesoForm, RespuestaForm, CuentaPorCobrarForm, CXCForm, RegistroFirmaForm, RegistroCuentaForm, RegistroPreguntaForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
@@ -287,3 +287,132 @@ def eliminar_cxc(request, cxc_id):
         # Redirige a la vista de la carpeta asociada tras la eliminación
         return redirect('carpetas:ver_carpeta', carpeta_id=cxc.carpeta.id)
     return render(request, 'control_procesos/eliminar_cxc.html', {'cxc': cxc})
+
+
+
+################firmas#######################
+def crear_firma(request, carpeta_id):
+    """
+    Vista para crear un nuevo registro de firma en la carpeta especificada.
+    """
+    carpeta = get_object_or_404(Carpeta, id=carpeta_id)
+    if request.method == 'POST':
+        form = RegistroFirmaForm(request.POST)
+        if form.is_valid():
+            firma = form.save(commit=False)
+            firma.carpeta = carpeta
+            firma.save()
+            return redirect('carpetas:ver_carpeta', carpeta_id=carpeta.id)
+    else:
+        form = RegistroFirmaForm()
+    return render(request, 'control_procesos/crear_firma.html', {'form': form, 'carpeta': carpeta})
+
+def editar_firma(request, firma_id):
+    """
+    Vista para editar un registro de firma existente.
+    """
+    firma = get_object_or_404(RegistroFirma, id=firma_id)
+    if request.method == 'POST':
+        form = RegistroFirmaForm(request.POST, instance=firma)
+        if form.is_valid():
+            form.save()
+            return redirect('carpetas:ver_carpeta', carpeta_id=firma.carpeta.id)
+    else:
+        form = RegistroFirmaForm(instance=firma)
+    return render(request, 'control_procesos/editar_firma.html', {'form': form, 'firma': firma})
+
+def eliminar_firma(request, firma_id):
+    """
+    Vista para eliminar un registro de firma.
+    """
+    firma = get_object_or_404(RegistroFirma, id=firma_id)
+    carpeta_id = firma.carpeta.id
+    firma.delete()
+    return redirect('carpetas:ver_carpeta', carpeta_id=carpeta_id)
+
+#######################registrar cuentas ########################3
+def crear_cuenta_especial(request, carpeta_id):
+    """Crea un nuevo registro de 'Cuenta' en la carpeta especificada."""
+    carpeta = get_object_or_404(Carpeta, id=carpeta_id)
+    if request.method == 'POST':
+        form = RegistroCuentaForm(request.POST)
+        if form.is_valid():
+            cuenta = form.save(commit=False)
+            cuenta.carpeta = carpeta
+            cuenta.save()
+            return redirect('carpetas:ver_carpeta', carpeta_id=carpeta.id)
+    else:
+        form = RegistroCuentaForm()
+    return render(request, 'control_procesos/crear_cuenta_especial.html', {
+        'carpeta': carpeta,
+        'form': form
+    })
+
+def editar_cuenta_especial(request, cuenta_id):
+    """Edita un registro de 'Cuenta' existente."""
+    cuenta = get_object_or_404(RegistroCuenta, id=cuenta_id)
+    if request.method == 'POST':
+        form = RegistroCuentaForm(request.POST, instance=cuenta)
+        if form.is_valid():
+            form.save()
+            return redirect('carpetas:ver_carpeta', carpeta_id=cuenta.carpeta.id)
+    else:
+        form = RegistroCuentaForm(instance=cuenta)
+    return render(request, 'control_procesos/editar_cuenta_especial.html', {
+        'form': form,
+        'cuenta': cuenta
+    })
+
+def eliminar_cuenta_especial(request, cuenta_id):
+    """Elimina un registro de 'Cuenta'."""
+    cuenta = get_object_or_404(RegistroCuenta, id=cuenta_id)
+    carpeta_id = cuenta.carpeta.id
+    cuenta.delete()
+    return redirect('carpetas:ver_carpeta', carpeta_id=carpeta_id)
+
+
+#################### pregunta ###############
+
+
+
+def crear_pregunta(request, carpeta_id):
+    """Crea un nuevo registro de Pregunta en la carpeta especificada."""
+    carpeta = get_object_or_404(Carpeta, id=carpeta_id)
+    if request.method == 'POST':
+        form = RegistroPreguntaForm(request.POST)
+        if form.is_valid():
+            pregunta_obj = form.save(commit=False)
+            pregunta_obj.carpeta = carpeta
+            pregunta_obj.save()
+            return redirect('carpetas:ver_carpeta', carpeta_id=carpeta.id)
+    else:
+        form = RegistroPreguntaForm()
+    return render(request, 'control_procesos/crear_pregunta.html', {
+        'carpeta': carpeta,
+        'form': form
+    })
+
+def editar_pregunta(request, pregunta_id):
+    """Edita un registro de Pregunta existente."""
+    pregunta_obj = get_object_or_404(RegistroPregunta, id=pregunta_id)
+    if request.method == 'POST':
+        form = RegistroPreguntaForm(request.POST, instance=pregunta_obj)
+        if form.is_valid():
+            form.save()
+            return redirect('carpetas:ver_carpeta', carpeta_id=pregunta_obj.carpeta.id)
+    else:
+        form = RegistroPreguntaForm(instance=pregunta_obj)
+    return render(request, 'control_procesos/editar_pregunta.html', {
+        'form': form,
+        'pregunta_obj': pregunta_obj
+    })
+
+def eliminar_pregunta(request, pregunta_id):
+    """Elimina un registro de Pregunta."""
+    pregunta_obj = get_object_or_404(RegistroPregunta, id=pregunta_id)
+    carpeta_id = pregunta_obj.carpeta.id
+    pregunta_obj.delete()
+    return redirect('carpetas:ver_carpeta', carpeta_id=carpeta_id)
+
+
+

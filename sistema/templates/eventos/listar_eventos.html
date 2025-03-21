@@ -12,7 +12,7 @@
                 <tr>
                     <th>Título</th>
                     <th>Fecha del Evento</th>
-                    <th>Ubicación</th>
+                    <th>Descripción</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -21,7 +21,7 @@
                 <tr class="event-row">
                     <td>{{ evento.titulo }}</td>
                     <td>{{ evento.fecha_evento|date:"d/m/Y H:i" }}</td>
-                    <td>{{ evento.ubicacion }}</td>
+                    <td>{{ evento.descripcion }}</td>
                     <td>
                         <a href="{% url 'eventos:editar_evento' evento.id %}" class="btn btn-warning btn-sm action-btn">Editar</a>
                         <a href="{% url 'eventos:eliminar_evento' evento.id %}" class="btn btn-danger btn-sm action-btn">Eliminar</a>

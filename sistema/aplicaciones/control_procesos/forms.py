@@ -1,5 +1,5 @@
 from django import forms
-from .models import Proceso, Respuesta, CuentaPorCobrar, CXC
+from .models import Proceso, Respuesta, CuentaPorCobrar, CXC, RegistroFirma, RegistroCuenta, RegistroPregunta
 
 class ProcesoForm(forms.ModelForm):
     class Meta:
@@ -81,3 +81,31 @@ class CXCForm(forms.ModelForm):
         widgets = {
             'fecha': forms.DateInput(attrs={'type': 'date'})
         }
+
+class RegistroFirmaForm(forms.ModelForm):
+    class Meta:
+        model = RegistroFirma
+        fields = ['perito', 'ruc', 'clave']
+        
+class RegistroCuentaForm(forms.ModelForm):
+    class Meta:
+        model = RegistroCuenta
+        fields = [
+            'compania',
+            'institucion_financiera',
+            'numero',
+            'ruc_ci',
+            'usuario',
+            'clave_web',
+            'clave_cajero',
+            'clave_trush',
+            'clave_sut'
+        ]
+        
+        
+
+
+class RegistroPreguntaForm(forms.ModelForm):
+    class Meta:
+        model = RegistroPregunta
+        fields = ['pregunta', 'respuesta']

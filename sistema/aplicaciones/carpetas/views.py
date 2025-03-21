@@ -31,6 +31,15 @@ def listar_carpetas(request):
         nombre="CXC TACAE", 
         padre=control_procesos
     )
+    datos_grupo, _ = Carpeta.objects.get_or_create(nombre="Datos Grupo TACAE", padre=control_procesos)
+
+    # Crear las subcarpetas dentro de "Datos Grupo TACAE"
+    firmas, _         = Carpeta.objects.get_or_create(nombre="Firmas", padre=datos_grupo)
+    cuentas, _        = Carpeta.objects.get_or_create(nombre="Cuentas", padre=datos_grupo)
+    preguntas, _      = Carpeta.objects.get_or_create(nombre="Preguntas", padre=datos_grupo)
+    claves_sistemas, _= Carpeta.objects.get_or_create(nombre="Claves Sistemas", padre=datos_grupo)
+    sistema_judicial, _= Carpeta.objects.get_or_create(nombre="Sistema Judicial", padre=datos_grupo)
+    bancos, _         = Carpeta.objects.get_or_create(nombre="Bancos", padre=datos_grupo)
     # Obtener todas las carpetas raíz (las dos principales)
     carpetas = Carpeta.objects.filter(padre=None)
 

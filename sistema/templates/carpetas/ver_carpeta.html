@@ -1,51 +1,39 @@
 {% extends "base.html" %}
+{% load static %}
+
 {% block title %}📂 {{ carpeta.nombre }} - TACAE{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-  <div class="card shadow-lg">
-    <div class="card-header bg-primary text-white">
-      <h4 class="mb-0">📁 {{ carpeta.nombre }}</h4>
+<div class="container mt-4 animate__animated animate__fadeIn">
+  <div class="card shadow-lg border-0">
+    <div class="card-header bg-primary text-white py-3">
+      <h4 class="mb-0 text-center">📁 {{ carpeta.nombre }}</h4>
     </div>
     <div class="card-body">
-
-      <!-- ACCIONES SEGÚN EL TIPO DE CARPETA (general) -->
-      <div class="mb-3">
+      <!-- ACCIONES SEGÚN EL TIPO DE CARPETA -->
+      <div class="mb-3 d-flex flex-wrap gap-2 justify-content-center">
         {% if carpeta.nombre != "Control de Procesos" %}
-          <a href="{% url 'carpetas:crear_subcarpeta' carpeta.id %}" class="btn btn-primary">
-            ➕ Crear Subcarpeta
-          </a>
+          <a href="{% url 'carpetas:crear_subcarpeta' carpeta.id %}" class="btn btn-primary action-btn">➕ Crear Subcarpeta</a>
         {% endif %}
         {% if carpeta.padre and carpeta.padre.nombre|lower == "cuentas por cobrar" %}
-          <a href="{% url 'procesos:registrar_cuenta_por_cobrar' carpeta.id %}" class="btn btn-success mb-2">
-            ➕ Registrar Cuenta por Cobrar
-          </a>
+          <a href="{% url 'procesos:registrar_cuenta_por_cobrar' carpeta.id %}" class="btn btn-success action-btn">➕ Registrar Cuenta por Cobrar</a>
         {% endif %}
-        {% if carpeta.padre and carpeta.padre.nombre == "CXC TACAE" %}
-          <a href="{% url 'control_procesos:crear_cxc' carpeta_id=carpeta.id %}" class="btn btn-success">
-            📋 Registrar nuevo CXC
-          </a>
+        {% if carpeta.padre and carpeta.padre.nombre|lower == "cxc tacae" %}
+          <a href="{% url 'control_procesos:crear_cxc' carpeta_id=carpeta.id %}" class="btn btn-success action-btn">📋 Registrar nuevo CXC</a>
         {% endif %}
         {% if carpeta.padre and carpeta.padre.nombre == "Procesos Pendientes" %}
-          <a href="{% url 'procesos:registrar_proceso' carpeta.id %}" class="btn btn-success">
-            📋 Registrar Nuevo Proceso
-          </a>
+          <a href="{% url 'procesos:registrar_proceso' carpeta.id %}" class="btn btn-success action-btn">📋 Registrar Nuevo Proceso</a>
         {% endif %}
       </div>
 
       <!-- LISTADO DE SUBCARPETAS -->
       <h4 class="mt-4">📂 Subcarpetas</h4>
       {% if carpeta.subcarpetas.all %}
-        <ul class="list-group">
-          {% for subcarpeta in carpeta.subcarpetas.all %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <a href="{% url 'carpetas:ver_carpeta' subcarpeta.id %}" class="text-decoration-none">
-                📁 {{ subcarpeta.nombre }}
-              </a>
-              <a href="{% url 'carpetas:eliminar_carpeta' subcarpeta.id %}" class="btn btn-danger btn-sm"
-                 onclick="return confirm('¿Eliminar esta subcarpeta?');">
-                🗑
-              </a>
+        <ul class="list-group mb-4">
+          {% for sub in carpeta.subcarpetas.all %}
+            <li class="list-group-item d-flex justify-content-between align-items-center hover-item">
+              <a href="{% url 'carpetas:ver_carpeta' sub.id %}" class="text-decoration-none">📁 {{ sub.nombre }}</a>
+              <a href="{% url 'carpetas:eliminar_carpeta' sub.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar esta subcarpeta?');">🗑</a>
             </li>
           {% endfor %}
         </ul>
@@ -57,12 +45,10 @@
       {% if carpeta.nombre not in "Control de Procesos, Procesos Pendientes" %}
         <h4 class="mt-4">📄 Documentos</h4>
         {% if carpeta.documentos.all %}
-          <ul class="list-group">
-            {% for documento in carpeta.documentos.all %}
-              <li class="list-group-item d-flex justify-content-between align-items-center">
-                <a href="{{ documento.archivo.url }}" target="_blank" class="text-decoration-none">
-                  📄 {{ documento.nombre }}
-                </a>
+          <ul class="list-group mb-4">
+            {% for doc in carpeta.documentos.all %}
+              <li class="list-group-item hover-item">
+                <a href="{{ doc.archivo.url }}" target="_blank" class="text-decoration-none">📄 {{ doc.nombre }}</a>
               </li>
             {% endfor %}
           </ul>
@@ -74,8 +60,9 @@
       <!-- PROCESOS: si el padre es "Procesos Pendientes" -->
       {% if carpeta.padre and carpeta.padre.nombre == "Procesos Pendientes" %}
         <h4 class="mt-4">📋 Procesos</h4>
+        <input id="searchProcesos" class="form-control mb-2" placeholder="🔍 Filtrar procesos...">
         {% if carpeta.procesos.all %}
-          <table class="table table-bordered">
+          <table id="tableProcesos" class="table table-bordered table-hover">
             <thead class="table-dark">
               <tr>
                 <th>Proceso</th>
@@ -89,8 +76,8 @@
                   <td>{{ proceso.proceso }}</td>
                   <td>{{ proceso.responsable }}</td>
                   <td>
-                    <a href="{% url 'control_procesos:listar_procesos' carpeta.id %}" class="btn btn-info btn-sm">🔍 Ver</a>
-                    <a href="{% url 'control_procesos:eliminar_proceso' carpeta.id %}" class="btn btn-danger btn-sm">🗑 Eliminar</a>
+                    <a href="{% url 'control_procesos:editar_proceso' proceso.id %}" class="btn btn-info btn-sm action-btn">✏️ Editar</a>
+                    <a href="{% url 'control_procesos:eliminar_proceso' proceso.id %}" class="btn btn-danger btn-sm action-btn">🗑 Eliminar</a>
                   </td>
                 </tr>
               {% endfor %}
@@ -101,11 +88,98 @@
         {% endif %}
       {% endif %}
 
+      {% if carpeta.nombre|lower == "cuentas" %}
+  <h4 class="mt-4">Cuentas Especiales</h4>
+  <a href="{% url 'control_procesos:crear_cuenta_especial' carpeta.id %}" class="btn btn-success mb-3">
+    ➕ Registrar Cuenta
+  </a>
+
+        {% if carpeta.cuentasEspeciales.all %}
+          <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+              <tr>
+                <th>Compañía</th>
+                <th>Institución financiera</th>
+                <th>Número</th>
+                <th>RUC / CI</th>
+                <th>Usuario</th>
+                <th>Clave Web</th>
+                <th>Clave Cajero</th>
+                <th>Clave Trush</th>
+                <th>Clave SUT</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for cta in carpeta.cuentasEspeciales.all %}
+                <tr>
+                  <td>{{ cta.compania }}</td>
+                  <td>{{ cta.institucion_financiera }}</td>
+                  <td>{{ cta.numero }}</td>
+                  <td>{{ cta.ruc_ci }}</td>
+                  <td>{{ cta.usuario }}</td>
+                  <td>{{ cta.clave_web }}</td>
+                  <td>{{ cta.clave_cajero }}</td>
+                  <td>{{ cta.clave_trush }}</td>
+                  <td>{{ cta.clave_sut }}</td>
+                  <td>
+                    <a href="{% url 'control_procesos:editar_cuenta_especial' cta.id %}" class="btn btn-info btn-sm">✏️ Editar</a>
+                    <a href="{% url 'control_procesos:eliminar_cuenta_especial' cta.id %}" class="btn btn-danger btn-sm"
+                      onclick="return confirm('¿Estás seguro de eliminar esta cuenta?');">
+                      🗑 Eliminar
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p class="text-muted">No hay cuentas registradas.</p>
+        {% endif %}
+      {% endif %}
+
+      {% if carpeta.nombre|lower == "preguntas" %}
+      <h4 class="mt-4">Preguntas y Respuestas</h4>
+      <a href="{% url 'control_procesos:crear_pregunta' carpeta.id %}" class="btn btn-success mb-3">
+        ➕ Registrar Pregunta
+      </a>
+      
+      {% if carpeta.preguntasEspeciales.all %}
+        <table class="table table-bordered table-hover">
+          <thead class="table-dark">
+            <tr>
+              <th>Pregunta</th>
+              <th>Respuesta</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for preg in carpeta.preguntasEspeciales.all %}
+              <tr>
+                <td>{{ preg.pregunta }}</td>
+                <td>{{ preg.respuesta }}</td>
+                <td>
+                  <a href="{% url 'control_procesos:editar_pregunta' preg.id %}" class="btn btn-info btn-sm">✏️ Editar</a>
+                  <a href="{% url 'control_procesos:eliminar_pregunta' preg.id %}" class="btn btn-danger btn-sm"
+                     onclick="return confirm('¿Estás seguro de que deseas eliminar esta pregunta?');">
+                    🗑 Eliminar
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="text-muted">No hay preguntas registradas.</p>
+      {% endif %}
+    {% endif %}
+
       <!-- CUENTAS POR COBRAR: si el padre es "Cuentas Por Cobrar" -->
       {% if carpeta.padre and carpeta.padre.nombre|lower == "cuentas por cobrar" %}
         <h4 class="mt-4">📋 Cuentas por Cobrar</h4>
+        <input id="searchCuentas" class="form-control mb-2" placeholder="🔍 Filtrar cuentas...">
         {% if cuentas %}
-          <table class="table table-bordered">
+          <table id="tableCuentas" class="table table-bordered table-hover">
             <thead class="table-dark">
               <tr>
                 <th>Fecha</th>
@@ -115,6 +189,7 @@
                 <th>Cobrado</th>
                 <th>Saldo</th>
                 <th>Observación</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -127,28 +202,25 @@
                   <td>${{ cuenta.cobro|default:"0.00" }}</td>
                   <td>${{ cuenta.saldo|default:"0.00" }}</td>
                   <td>{{ cuenta.observacion|default:"-" }}</td>
+                  <td>
+                    <a href="{% url 'procesos:editar_cuenta_por_cobrar' cuenta.id %}" class="btn btn-info btn-sm action-btn">✏️ Editar</a>
+                    <a href="{% url 'procesos:eliminar_cuenta_por_cobrar' cuenta.id %}" class="btn btn-danger btn-sm action-btn">🗑 Eliminar</a>
+                  </td>
                 </tr>
               {% endfor %}
             </tbody>
-            <tfoot>
-              <tr class="table-success">
-                <td colspan="4"><strong>Total:</strong></td>
-                <td><strong>${{ total_cobrado }}</strong></td>
-                <td><strong>${{ total_saldo }}</strong></td>
-                <td></td>
-              </tr>
-            </tfoot>
           </table>
         {% else %}
-          <p class="text-muted">🚫 No hay cuentas por cobrar en esta carpeta.</p>
+          <p class="text-muted">🚫 No hay cuentas.</p>
         {% endif %}
       {% endif %}
 
-      <!-- SECCIÓN CXC: si el padre es "CXC TACAE" (en mayúsculas exactas) -->
-      {% if carpeta.padre and carpeta.padre.nombre == "CXC TACAE" %}
+      <!-- REGISTROS CXC: si el padre es "CXC TACAE" -->
+      {% if carpeta.padre and carpeta.padre.nombre|lower == "cxc tacae" %}
         <h4 class="mt-4">Registros CXC</h4>
+        <input id="searchCxc" class="form-control mb-2" placeholder="🔍 Filtrar registros CXC...">
         {% if carpeta.cxcs.all %}
-          <table class="table table-bordered">
+          <table id="tableCxc" class="table table-bordered table-hover">
             <thead class="table-dark">
               <tr>
                 <th>Cliente</th>
@@ -168,34 +240,92 @@
                   <td>{{ cxc.real }}</td>
                   <td>{{ cxc.observacion }}</td>
                   <td>
-                    <a href="{% url 'control_procesos:editar_cxc' cxc_id=cxc.id %}" class="btn btn-info btn-sm">Editar</a>
-                    <a href="{% url 'control_procesos:eliminar_cxc' cxc_id=cxc.id %}" class="btn btn-danger btn-sm"
-                       onclick="return confirm('¿Estás seguro de que deseas eliminar este registro CXC?');">
-                      Eliminar
-                    </a>
+                    <a href="{% url 'control_procesos:editar_cxc' cxc.id %}" class="btn btn-info btn-sm action-btn">✏️ Editar</a>
+                    <a href="{% url 'control_procesos:eliminar_cxc' cxc.id %}" class="btn btn-danger btn-sm action-btn" onclick="return confirm('¿Estás seguro de que deseas eliminar este registro CXC?');">🗑 Eliminar</a>
                   </td>
                 </tr>
               {% endfor %}
             </tbody>
           </table>
         {% else %}
-          <p class="text-muted">No hay registros de CXC en esta carpeta.</p>
+          <p class="text-muted">No hay registros de CXC.</p>
+        {% endif %}
+      {% endif %}
+
+      <!-- SECCIÓN DE FIRMAS: Solo se muestra si la carpeta es "Firmas" -->
+      {% if carpeta.nombre|lower == "firmas" %}
+
+        <h4 class="mt-4">Firmas</h4>
+        <a href="{% url 'control_procesos:crear_firma' carpeta.id %}" class="btn btn-success mb-3">➕ Registrar Firma</a>
+        {% if carpeta.firmas.all %}
+          <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+              <tr>
+                <th>Perito</th>
+                <th>RUC</th>
+                <th>Clave</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for firma in carpeta.firmas.all %}
+                <tr>
+                  <td>{{ firma.perito }}</td>
+                  <td>{{ firma.ruc }}</td>
+                  <td>{{ firma.clave }}</td>
+                  <td>
+                    <a href="{% url 'control_procesos:editar_firma' firma.id %}" class="btn btn-info btn-sm action-btn">✏️ Editar</a>
+                    <a href="{% url 'control_procesos:eliminar_firma' firma.id %}" class="btn btn-danger btn-sm action-btn" onclick="return confirm('¿Estás seguro de eliminar esta firma?');">🗑 Eliminar</a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p class="text-muted">No hay firmas registradas.</p>
         {% endif %}
       {% endif %}
 
       <!-- BOTONES DE NAVEGACIÓN -->
-      <div class="mt-3">
-        {% if carpeta.padre %}
-          <a href="{% url 'carpetas:ver_carpeta' carpeta.padre.id %}" class="btn btn-outline-secondary">⬅ Volver</a>
-        {% endif %}
-        <a href="{% url 'carpetas:listar_carpetas' %}" class="btn btn-outline-primary">🏠 Inicio</a>
+      <div class="mt-3 text-center">
+        <a href="{% if carpeta.padre %}{% url 'carpetas:ver_carpeta' carpeta.padre.id %}{% else %}{% url 'carpetas:listar_carpetas' %}{% endif %}" class="btn btn-outline-secondary action-btn">
+          ⬅ Volver carpeta anterior
+        </a>
+        <a href="{% url 'home' %}" class="btn btn-outline-primary action-btn">🏠 Inicio</a>
+        <a href="{% url 'carpetas:listar_carpetas' %}" class="btn btn-outline-info action-btn">📂 Carpeta Principal</a>
       </div>
 
     </div>
   </div>
 </div>
 
-<!-- Bootstrap 5 -->
+<script>
+function setupFilter(inputId, tableId) {
+  document.getElementById(inputId)?.addEventListener('keyup', function() {
+    const q = this.value.toLowerCase();
+    document.querySelectorAll(`#${tableId} tbody tr`).forEach(r => {
+      r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+  });
+}
+setupFilter('searchProcesos','tableProcesos');
+setupFilter('searchCuentas','tableCuentas');
+setupFilter('searchCxc','tableCxc');
+</script>
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<style>
+  .action-btn {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .action-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+  .hover-item:hover {
+    background-color: #f8f9fa;
+  }
+</style>
 {% endblock %}

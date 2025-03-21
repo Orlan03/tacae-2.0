@@ -77,8 +77,8 @@ def lista_empleados(request):
 # Editar empleado
 @user_passes_test(is_owner)
 @login_required
-def editar_empleado(request, empleado_id):
-    empleado = get_object_or_404(Empleado, id=empleado_id)
+def editar_empleado(request, pk):
+    empleado = get_object_or_404(Empleado, id=pk)
 
     if request.method == 'POST':
         form = EmpleadoForm(request.POST, instance=empleado)

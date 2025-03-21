@@ -4,7 +4,9 @@
 {% block title %}Crear Evento - TACAE{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="bubble-background"></div>
+
+<div class="container-bubble">
   <div class="create-event-card">
     <div class="card-header">
       <img src="{% static 'img/tacae.jpg' %}" alt="TACAE Logo" class="logo">
@@ -14,98 +16,137 @@
       <form method="post" novalidate>
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn btn-success btn-submit">Crear Evento</button>
+        <button type="submit" class="btn-submit">Crear Evento</button>
       </form>
     </div>
     <div class="card-footer">
-      <a href="{% url 'eventos:listar_eventos' %}" class="btn btn-secondary btn-back">⬅ Volver</a>
+      <a href="{% url 'eventos:listar_eventos' %}" class="btn-back">⬅ Volver</a>
     </div>
   </div>
 </div>
 
 <style>
-  /* Fondo de la página: color neutro */
-  body {
-    background: #f7f7f7; /* un gris muy claro */
+  /* 1. Fondo con “burbujas” */
+  body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+  }
+  .bubble-background {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(120deg, #a1c4fd, #c2e9fb);
+    /* Podrías usar una imagen, gradiente, o pseudo-elementos para burbujas */
+    z-index: -1; /* para que quede detrás del contenido */
+    overflow: hidden;
   }
 
-  /* Contenedor principal */
-  .container {
-    max-width: 600px;
-    margin: 80px auto;
-    padding: 20px;
+  /* 2. Contenedor principal centrado */
+  .container-bubble {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
   }
-  /* Tarjeta del formulario con efecto glass */
+
+  /* 3. Tarjeta */
   .create-event-card {
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    overflow: hidden;
-    animation: slideDown 0.6s ease;
-  }
-  /* Encabezado de la tarjeta */
-  .create-event-card .card-header {
     background: #fff;
-    padding: 20px;
-    text-align: center;
-    border-bottom: 1px solid #ddd;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    overflow: hidden;
+    animation: popIn 0.5s ease;
   }
-  .create-event-card .logo {
-    max-width: 80px;
+  @keyframes popIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  /* 4. Cabecera */
+  .card-header {
+    text-align: center;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+  }
+  .logo {
+    width: 70px;
     border-radius: 50%;
     margin-bottom: 10px;
   }
-  .create-event-card .card-header h2 {
+  .card-header h2 {
     margin: 0;
-    font-size: 1.8rem;
-    color: #003366;
+    color: #0052cc;
   }
-  /* Cuerpo del formulario */
-  .create-event-card .card-body {
+
+  /* 5. Cuerpo del formulario con campos “flotantes” */
+  .card-body {
     padding: 20px;
-    font-size: 1rem;
+  }
+  .card-body p {
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .card-body label {
+    display: block;
+    margin-bottom: 5px;
     color: #333;
+    font-weight: bold;
   }
-  /* Botón de enviar */
-  .create-event-card .btn-submit {
+  .card-body input[type="text"],
+  .card-body input[type="date"],
+  .card-body select,
+  .card-body textarea {
     width: 100%;
-    padding: 12px;
-    background: #003366;
-    color: #fff;
     border: none;
-    border-radius: 5px;
+    border-bottom: 2px solid #aaa;
+    padding: 8px 0;
+    font-size: 1rem;
+    background: transparent;
+    transition: border-color 0.3s ease;
+  }
+  .card-body input:focus,
+  .card-body select:focus,
+  .card-body textarea:focus {
+    outline: none;
+    border-color: #0052cc;
+  }
+
+  /* 6. Botón */
+  .btn-submit {
+    display: block;
+    width: 100%;
+    margin-top: 20px;
+    background: #0052cc;
+    color: #fff;
     font-size: 1.1rem;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: background 0.3s ease, transform 0.2s;
   }
-  .create-event-card .btn-submit:hover {
-    background: #002244;
+  .btn-submit:hover {
+    background: #003d99;
+    transform: scale(1.02);
   }
-  /* Pie de la tarjeta */
-  .create-event-card .card-footer {
-    background: #f8f9fa;
-    padding: 10px;
+
+  /* 7. Pie de tarjeta */
+  .card-footer {
     text-align: center;
+    padding: 10px;
+    background: #f8f9fa;
   }
-  .create-event-card .btn-back {
-    color: #003366;
+  .btn-back {
+    color: #0052cc;
     text-decoration: none;
     font-weight: bold;
     transition: color 0.3s ease;
   }
-  .create-event-card .btn-back:hover {
-    color: #002244;
-  }
-  /* Animación de entrada */
-  @keyframes slideDown {
-    from {
-      opacity: 0;
-      transform: translateY(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .btn-back:hover {
+    color: #003d99;
   }
 </style>
 {% endblock %}
