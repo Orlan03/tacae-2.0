@@ -5,7 +5,14 @@ from django.contrib.auth.models import User
 class Proceso(models.Model):
     sorteo = models.DateField(blank=True, null=True)
     proceso = models.CharField(max_length=200)
-    responsable = models.CharField(max_length=200, default="Desconocido")
+    # Se cambia responsable a ForeignKey al modelo User
+    responsable = models.ForeignKey(
+        User, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        verbose_name="Responsable"
+    )
     calificacion = models.CharField(max_length=100, blank=True, null=True)
     actor = models.CharField(max_length=200, default="Desconocido")
     demandado = models.CharField(max_length=200, default="Desconocido")
@@ -15,6 +22,18 @@ class Proceso(models.Model):
     fecha_limite = models.DateField(blank=True, null=True)
     observaciones = models.TextField(blank=True, null=True)
 
+    # Definir las opciones para el campo estado
+    ESTADO_CHOICES = (
+        ('hecho', 'Hecho'),
+        ('pendiente', 'Pendiente'),
+        ('faltan_datos', 'Faltan datos'),
+    )
+    estado = models.CharField(
+        max_length=20, 
+        choices=ESTADO_CHOICES, 
+        default='pendiente'
+    )
+    
     carpeta = models.ForeignKey(Carpeta, on_delete=models.CASCADE, related_name='procesos')
 
     def __str__(self):

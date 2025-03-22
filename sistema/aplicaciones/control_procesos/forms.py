@@ -14,14 +14,15 @@ class ProcesoForm(forms.ModelForm):
             'posesion',
             'fecha_cumplimiento',
             'fecha_limite',
-            'observaciones'
+            'observaciones',
+            'estado'
         ]
         widgets = {
             'fecha_cumplimiento': forms.DateInput(attrs={'type': 'date'}),
             'fecha_limite': forms.DateInput(attrs={'type': 'date'}),
             'sorteo': forms.DateInput(attrs={'type': 'date'}),
         }
-        
+
         
 
 
