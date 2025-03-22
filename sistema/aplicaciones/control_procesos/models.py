@@ -21,7 +21,7 @@ class Proceso(models.Model):
         return self.proceso
     
     
-
+#####hecho, pendiente, faltan datos
 
 
 class Respuesta(models.Model):
@@ -84,8 +84,7 @@ class RegistroFirma(models.Model):
         return f"{self.perito} - {self.ruc}"
     
     
-from django.db import models
-from aplicaciones.carpetas.models import Carpeta
+
 
 class RegistroCuenta(models.Model):
     carpeta = models.ForeignKey(

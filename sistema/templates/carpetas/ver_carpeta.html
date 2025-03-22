@@ -67,7 +67,13 @@
               <tr>
                 <th>Proceso</th>
                 <th>Responsable</th>
+                <th>Fecha de vencimiento</th>
+                <th>Observación</th>
+                <th>Posesesión</th>
                 <th>Acciones</th>
+
+
+
               </tr>
             </thead>
             <tbody>
@@ -75,6 +81,12 @@
                 <tr>
                   <td>{{ proceso.proceso }}</td>
                   <td>{{ proceso.responsable }}</td>
+                  <td>{{ proceso.fecha_cumplimiento }}</td>
+                  <td>{{ proceso.observaciones}}</td>
+                  <td>{{ proceso.posesion }}</td>
+                  
+
+
                   <td>
                     <a href="{% url 'control_procesos:editar_proceso' proceso.id %}" class="btn btn-info btn-sm action-btn">✏️ Editar</a>
                     <a href="{% url 'control_procesos:eliminar_proceso' proceso.id %}" class="btn btn-danger btn-sm action-btn">🗑 Eliminar</a>

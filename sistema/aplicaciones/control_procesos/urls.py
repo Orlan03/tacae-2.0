@@ -1,6 +1,4 @@
 from django.urls import path
-
-
 from .views import *
 app_name = 'control_procesos'
 
@@ -16,6 +14,8 @@ urlpatterns = [
     path('respuestas/por_nombre/<int:carpeta_id>/', listar_respuestas_por_nombre, name='listar_respuestas_por_nombre'),
     path("cuentas/listar/<int:carpeta_id>/", listar_cuentas_por_cobrar, name="listar_cuentas_por_cobrar"),
     path('cuentas/registrar/<int:carpeta_id>/', registrar_cuenta_por_cobrar, name='registrar_cuenta_por_cobrar'),
+    path('cuentas/editar/<int:cuenta_id>/', editar_cuenta_por_cobrar, name='editar_cuenta_por_cobrar'),
+    path('cuentas/eliminar/<int:cuenta_id>/', eliminar_cuenta_por_cobrar, name='eliminar_cuenta_por_cobrar'),
     path('cxc/crear/<int:carpeta_id>/', crear_cxc_tacae, name='crear_cxc'),
     path('cxc/editar/<int:cxc_id>/', editar_cxc, name='editar_cxc'),
     path('cxc/eliminar/<int:cxc_id>/', eliminar_cxc, name='eliminar_cxc'),

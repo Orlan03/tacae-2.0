@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Editar Cuenta por Cobrar{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow-lg">
+    <div class="card-header bg-warning text-white">
+      <h2>Editar Cuenta por Cobrar</h2>
+    </div>
+    <div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-warning">Actualizar</button>
+      </form>
+    </div>
+    <div class="card-footer text-center">
+      <!-- Enlace para volver a la carpeta asociada a la cuenta -->
+      <a href="{% url 'carpetas:ver_carpeta' cuenta.carpeta.id %}" class="btn btn-secondary">⬅ Volver</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

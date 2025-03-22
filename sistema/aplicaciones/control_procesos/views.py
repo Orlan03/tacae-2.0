@@ -220,6 +220,32 @@ def registrar_cuenta_por_cobrar(request, carpeta_id):
         "carpeta": carpeta,
         "carpetas_con_procesos": carpetas_con_procesos,  # Pasamos los procesos organizados
     })
+    
+def editar_cuenta_por_cobrar(request, cuenta_id):
+    """
+    Vista para editar un registro de CuentaPorCobrar existente.
+    """
+    cuenta = get_object_or_404(CuentaPorCobrar, id=cuenta_id)
+    
+    if request.method == 'POST':
+        form = CuentaPorCobrarForm(request.POST, instance=cuenta)
+        if form.is_valid():
+            form.save()  # Se recalculará 'saldo' en el método 'save()' del modelo
+            return redirect('carpetas:ver_carpeta', carpeta_id=cuenta.carpeta.id)
+    else:
+        form = CuentaPorCobrarForm(instance=cuenta)
+    
+    return render(request, 'control_procesos/editar_cuenta.html', {
+        'form': form,
+        'cuenta': cuenta
+    })
+    
+def eliminar_cuenta_por_cobrar(request, cuenta_id):
+    cuenta = get_object_or_404(CuentaPorCobrar, id=cuenta_id)
+    carpeta_id = cuenta.carpeta.id
+    cuenta.delete()
+    return redirect('carpetas:ver_carpeta', carpeta_id=carpeta_id)
+
 
 
 def listar_cuentas_por_cobrar(request, carpeta_id):
