@@ -135,3 +135,18 @@ class RegistroSistemaForm(forms.ModelForm):
     class Meta:
         model = RegistroSistema
         fields = ['compania', 'usuario', 'clave']
+        
+
+class BancoForm(forms.ModelForm):
+    class Meta:
+        model = Banco
+        fields = ['compania', 'institucion_financiera', 'numero', 'ruc_ci', 'usuario', 'clave_web', 'saldo']
+        widgets = {
+            'compania': forms.TextInput(attrs={'class': 'form-control'}),
+            'institucion_financiera': forms.TextInput(attrs={'class': 'form-control'}),
+            'numero': forms.TextInput(attrs={'class': 'form-control'}),
+            'ruc_ci': forms.TextInput(attrs={'class': 'form-control'}),
+            'usuario': forms.TextInput(attrs={'class': 'form-control'}),
+            'clave_web': forms.PasswordInput(attrs={'class': 'form-control'}),
+            'saldo': forms.NumberInput(attrs={'class': 'form-control'}),
+        }

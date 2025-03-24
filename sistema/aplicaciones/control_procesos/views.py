@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from aplicaciones.carpetas.models import Carpeta
-from .forms import ProcesoForm, RespuestaForm, CuentaPorCobrarForm, CXCForm, RegistroFirmaForm, RegistroCuentaForm, RegistroPreguntaForm, RegistroClavesSistemasForm
+from .forms import *
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
@@ -530,3 +530,36 @@ def eliminar_sistema(request, sistema_id):
     carpeta_id = registro.carpeta.id
     registro.delete()
     return redirect('carpetas:ver_carpeta', carpeta_id=carpeta_id)
+
+
+#############BANCOS############################
+def crear_banco(request, carpeta_id):
+    carpeta = get_object_or_404(Carpeta, id=carpeta_id)
+    if request.method == 'POST':
+        form = BancoForm(request.POST)
+        if form.is_valid():
+            banco = form.save(commit=False)
+            banco.carpeta = carpeta
+            banco.save()
+            return redirect('carpetas:ver_carpeta', carpeta.id)
+    else:
+        form = BancoForm()
+    return render(request, 'control_procesos/crear_banco.html', {'form': form, 'carpeta': carpeta})
+
+def editar_banco(request, banco_id):
+    banco = get_object_or_404(Banco, id=banco_id)
+    if request.method == 'POST':
+        form = BancoForm(request.POST, instance=banco)
+        if form.is_valid():
+            form.save()
+            return redirect('carpetas:ver_carpeta', banco.carpeta.id)
+    else:
+        form = BancoForm(instance=banco)
+    return render(request, 'control_procesos/editar_banco.html', {'form': form, 'carpeta': banco.carpeta})
+
+def eliminar_banco(request, banco_id):
+    banco = get_object_or_404(Banco, id=banco_id)
+    carpeta_id = banco.carpeta.id
+    banco.delete()
+    return redirect('carpetas:ver_carpeta', carpeta_id)
+

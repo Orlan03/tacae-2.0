@@ -159,6 +159,8 @@
       <a href="{% url 'control_procesos:crear_pregunta' carpeta.id %}" class="btn btn-success mb-3">
         ➕ Registrar Pregunta
       </a>
+
+      
       
       {% if carpeta.preguntasEspeciales.all %}
         <table class="table table-bordered table-hover">
@@ -232,15 +234,17 @@
       {% endif %}
 
       <!-- REGISTROS CXC: si el padre es "CXC TACAE" -->
-      {% if carpeta.padre and carpeta.padre.nombre|lower == "cxc tacae" %}
+      {% if carpeta.nombre|lower == "cxc tacae" %}
+
         <h4 class="mt-4">Registros CXC</h4>
+        <a href="{% url 'control_procesos:crear_cxc' carpeta.id %}" class="btn btn-success mb-3">Registrar</a>
         <input id="searchCxc" class="form-control mb-2" placeholder="🔍 Filtrar registros CXC...">
         {% if carpeta.cxcs.all %}
           <table id="tableCxc" class="table table-bordered table-hover">
             <thead class="table-dark">
               <tr>
                 <th>Cliente</th>
-                <th># Factura</th>
+                <th>N# Factura</th>
                 <th>Fecha</th>
                 <th>Real</th>
                 <th>Observación</th>
@@ -269,42 +273,42 @@
       {% endif %}
        
       {% if carpeta.nombre|lower == "sistema" %}
-  <h4 class="mt-4">Sistemas</h4>
-  <a href="{% url 'control_procesos:crear_sistema' carpeta.id %}" class="btn btn-success mb-3">
-    ➕ Registrar Sistema
-  </a>
+        <h4 class="mt-4">Sistemas</h4>
+        <a href="{% url 'control_procesos:crear_sistema' carpeta.id %}" class="btn btn-success mb-3">
+          ➕ Registrar Sistema
+        </a>
 
-    {% if carpeta.sistemasEspeciales.all %}
-      <table class="table table-bordered table-hover">
-        <thead class="table-dark">
-          <tr>
-            <th>Compañía</th>
-            <th>Usuario</th>
-            <th>Clave</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for item in carpeta.sistemasEspeciales.all %}
-            <tr>
-              <td>{{ item.compania }}</td>
-              <td>{{ item.usuario }}</td>
-              <td>{{ item.clave }}</td>
-              <td>
-                <a href="{% url 'control_procesos:editar_sistema' item.id %}" class="btn btn-info btn-sm">✏️ Editar</a>
-                <a href="{% url 'control_procesos:eliminar_sistema' item.id %}" class="btn btn-danger btn-sm"
-                  onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?');">
-                  🗑 Eliminar
-                </a>
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    {% else %}
-      <p class="text-muted">No hay registros de Sistemas.</p>
-    {% endif %}
-  {% endif %}
+        {% if carpeta.sistemasEspeciales.all %}
+          <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+              <tr>
+                <th>Compañía</th>
+                <th>Usuario</th>
+                <th>Clave</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in carpeta.sistemasEspeciales.all %}
+                <tr>
+                  <td>{{ item.compania }}</td>
+                  <td>{{ item.usuario }}</td>
+                  <td>{{ item.clave }}</td>
+                  <td>
+                    <a href="{% url 'control_procesos:editar_sistema' item.id %}" class="btn btn-info btn-sm">✏️ Editar</a>
+                    <a href="{% url 'control_procesos:eliminar_sistema' item.id %}" class="btn btn-danger btn-sm"
+                      onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?');">
+                      🗑 Eliminar
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p class="text-muted">No hay registros de Sistemas.</p>
+        {% endif %}
+      {% endif %}
         {% if carpeta.nombre|lower == "claves" %}
   <h4 class="mt-4">Claves Sistemas</h4>
   <a href="{% url 'control_procesos:crear_claves_sistemas' carpeta.id %}" class="btn btn-success mb-3">
@@ -405,6 +409,49 @@
     </div>
   </div>
 </div>
+            {% if carpeta.nombre|lower == "bancos" %}
+              <h4 class="mt-4">🏦 Información de Bancos</h4>
+              <a href="{% url 'control_procesos:crear_banco' carpeta.id %}" class="btn btn-success mb-3">
+                ➕ Registrar Banco
+              </a>
+
+              {% if carpeta.bancos.all %}
+                <table class="table table-bordered table-hover">
+                  <thead class="table-dark">
+                    <tr>
+                      <th>Compañía</th>
+                      <th>Institución Financiera</th>
+                      <th>Número</th>
+                      <th>RUC/CI</th>
+                      <th>Usuario</th>
+                      <th>Clave Web</th>
+                      <th>Saldo</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for banco in carpeta.bancos.all %}
+                      <tr>
+                        <td>{{ banco.compania }}</td>
+                        <td>{{ banco.institucion_financiera }}</td>
+                        <td>{{ banco.numero }}</td>
+                        <td>{{ banco.ruc_ci }}</td>
+                        <td>{{ banco.usuario }}</td>
+                        <td>{{ banco.clave_web }}</td>
+                        <td>${{ banco.saldo }}</td>
+                        <td>
+                          <a href="{% url 'control_procesos:editar_banco' banco.id %}" class="btn btn-info btn-sm">✏️ Editar</a>
+                          <a href="{% url 'control_procesos:eliminar_banco' banco.id %}" class="btn btn-danger btn-sm"
+                            onclick="return confirm('¿Seguro que deseas eliminar este banco?');">🗑 Eliminar</a>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              {% else %}
+                <p class="text-muted">📂 No hay bancos registrados.</p>
+              {% endif %}
+            {% endif %}
 
 <script>
 function setupFilter(inputId, tableId) {

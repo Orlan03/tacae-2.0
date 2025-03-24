@@ -34,6 +34,9 @@ urlpatterns = [
     path('sistemas/crear/<int:carpeta_id>/', crear_sistema, name='crear_sistema'),
     path('sistemas/editar/<int:sistema_id>/', editar_sistema, name='editar_sistema'),
     path('sistemas/eliminar/<int:sistema_id>/', eliminar_sistema, name='eliminar_sistema'),
+    path('banco/crear/<int:carpeta_id>/', crear_banco, name='crear_banco'),
+    path('banco/editar/<int:banco_id>/', editar_banco, name='editar_banco'),
+    path('banco/eliminar/<int:banco_id>/', eliminar_banco, name='eliminar_banco'),
     
 ]
     

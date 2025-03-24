@@ -1,151 +1,205 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Editar Empleado - TACAE{% endblock %}
-
 {% block content %}
-<!-- Fondo de burbujas -->
-<div class="bubble-background"></div>
-
-<!-- Contenedor principal centrado -->
-<div class="container-bubble">
-  <div class="create-event-card">
-    <!-- Cabecera -->
-    <div class="card-header">
-      <img src="{% static 'img/tacae.jpg' %}" alt="TACAE Logo" class="logo">
-      <h2>Editar Empleado</h2>
+<div class="form-container">
+    <div class="header">
+        <a href="{% url 'lista_empleados' %}">
+            <img src="{% static 'img/volver_icon.png' %}" alt="Volver" class="btn-back">
+        </a>
+        <h2>Editar Empleado</h2>
     </div>
-    <!-- Cuerpo del formulario -->
-    <div class="card-body">
-      <form method="post" novalidate>
+
+    {% if messages %}
+        <div class="messages">
+            <ul>
+                {% for message in messages %}
+                    <li style="color: red;">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>  
+    {% endif %}
+
+    <form method="post" class="form-register">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn-submit">Actualizar</button>
-      </form>
-    </div>
-    <!-- Pie de tarjeta -->
-    <div class="card-footer">
-      <a href="{% url 'lista_empleados' %}" class="card-btn">Volver</a>
+        
+        <!-- Nombres -->
+        <div class="form-group">
+            <label for="nombres">
+                <img src="{% static 'img/nombres_icon.png' %}" alt="Nombres" class="form-icon">
+            </label>
+            <input type="text" name="nombres" id="nombres" value="{{ empleado.nombres }}" placeholder="Nombres completos">
+        </div>
+        
+        <!-- Apellidos -->
+        <div class="form-group">
+            <label for="apellidos">
+                <img src="{% static 'img/nombres_icon.png' %}" alt="Apellidos" class="form-icon">
+            </label>
+            <input type="text" name="apellidos" id="apellidos" value="{{ empleado.apellidos }}" placeholder="Apellidos completos">
+        </div>
 
-    </div>
-  </div>
+        <!-- Cédula -->
+        <div class="form-group">
+            <label for="cedula">
+                <img src="{% static 'img/cedula_icon.png' %}" alt="Cédula" class="form-icon">
+            </label>
+            <input type="text" name="cedula" id="cedula" value="{{ empleado.cedula }}" placeholder="Número de cédula">
+        </div>
+
+        <!-- Número de celular -->
+        <div class="form-group">
+            <label for="celular">
+                <img src="{% static 'img/celular_icon (2).png' %}" alt="Celular" class="form-icon">
+            </label>
+            <input type="text" name="celular" id="celular" value="{{ empleado.celular }}" placeholder="Número de celular">
+        </div>
+
+        <!-- Nombre de usuario -->
+        <div class="form-group">
+            <label for="username">
+                <img src="{% static 'img/nombres_icon.png' %}" alt="Nombre de usuario" class="form-icon">
+            </label>
+            <input type="text" name="username" id="username" value="{{ empleado.user.username }}" placeholder="Nombre de usuario">
+        </div>
+
+        <!-- Contraseña -->
+        <div class="form-group">
+            <label for="password">
+                <img src="{% static 'img/password_icon.png' %}" alt="Contraseña" class="form-icon">
+            </label>
+            <input type="password" name="password" id="password" placeholder="Ingrese una contraseña">
+        </div>
+
+        <!-- Confirmar Contraseña -->
+        <div class="form-group">
+            <label for="confirm_password">
+                <img src="{% static 'img/password_icon.png' %}" alt="Confirmar Contraseña" class="form-icon">
+            </label>
+            <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirme la contraseña">
+        </div>
+
+        <!-- Botón Guardar Cambios (centrado) -->
+        <div class="form-buttons">
+            <button type="submit" class="btn-submit">Guardar Cambios</button>
+        </div>
+    </form>
 </div>
 
-<!-- Estilos -->
 <style>
-  /* 1. Fondo con “burbujas” */
-  body, html {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-  }
-  .bubble-background {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(120deg, #a1c4fd, #c2e9fb);
-    z-index: -1;
-    overflow: hidden;
-  }
+/* ---------- RESETEO Y FUENTE ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Helvetica', Arial, sans-serif;
+  background: #f5f7fa;
+  color: #333;
+}
 
-  /* 2. Contenedor principal centrado */
-  .container-bubble {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
+/* ---------- CONTENEDOR DEL FORMULARIO ---------- */
+.form-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
 
-  /* 3. Tarjeta principal */
-  .create-event-card {
-    background: #fff;
-    width: 90%;
-    max-width: 500px;
-    border-radius: 20px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    overflow: hidden;
-    animation: popIn 0.5s ease;
-  }
-  @keyframes popIn {
-    from { transform: scale(0.8); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-  }
+/* ---------- ENCABEZADO ---------- */
+.header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.btn-back {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+.btn-back:hover {
+  background-color: rgb(197, 203, 205);
+  transform: scale(1.2);
+}
+h2 {
+  font-size: 24px;
+  color: #0f17a8;
+  text-align: center;
+  flex: 1;
+}
 
-  /* 4. Cabecera */
-  .card-header {
-    text-align: center;
-    padding: 20px;
-    border-bottom: 1px solid #eee;
-  }
-  .logo {
-    width: 70px;
-    border-radius: 50%;
-    margin-bottom: 10px;
-  }
-  .card-header h2 {
-    margin: 0;
-    color: #0052cc;
-  }
+/* ---------- FORMULARIO ---------- */
+.form-register {
+  display: flex;
+  flex-direction: column;
+}
+.form-group {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Espacio entre el ícono y el input */
+  margin-bottom: 20px;
+}
 
-  /* 5. Cuerpo del formulario */
-  .card-body {
-    padding: 20px;
-  }
-  .card-body label {
-    display: block;
-    margin-bottom: 5px;
-    color: #333;
-    font-weight: bold;
-  }
-  .card-body input[type="text"],
-  .card-body input[type="password"],
-  .card-body textarea {
-    width: 100%;
-    padding: 12px;
-    font-size: 14px;
-    border: 1px solid #ddd;
-    border-radius: 20px;
-    margin-bottom: 15px;
-    outline: none;
-    transition: border-color 0.3s ease;
-  }
-  .card-body input:focus,
-  .card-body textarea:focus {
-    border-color: #4CAF50;
-  }
+/* Contenedor fijo para la etiqueta (ícono) */
+.form-group label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px; /* Reserva un espacio fijo para el ícono */
+}
 
-  /* 6. Botón de enviar */
-  .btn-submit {
-    display: block;
-    width: 100%;
-    background: #4CAF50;
-    color: #fff;
-    font-size: 16px;
-    border: none;
-    border-radius: 25px;
-    padding: 12px;
-    cursor: pointer;
-    transition: background 0.3s ease, transform 0.2s;
-  }
-  .btn-submit:hover {
-    background: #45a049;
-    transform: scale(1.02);
-  }
+.form-icon {
+  width: 30px; /* Tamaño fijo para todos los íconos */
+  height: 30px;
+  object-fit: contain;
+}
 
-  /* 7. Pie de tarjeta */
-  .card-footer {
-    text-align: center;
-    padding: 10px;
-    background: #f8f9fa;
-  }
-  .btn-back {
-    color: #0052cc;
-    text-decoration: none;
-    font-weight: bold;
-    transition: color 0.3s ease;
-  }
-  .btn-back:hover {
-    color: #003d99;
-  }
+.form-group input {
+  padding: 12px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  width: 100%;
+}
+.form-group input:focus {
+  border-color: #4CAF50;
+  outline: none;
+}
+
+/* Placeholder */
+.form-group input::placeholder {
+  color: #717070;
+  font-style: italic;
+}
+
+/* ---------- BOTÓN CENTRADO ---------- */
+.form-buttons {
+  margin-top: 30px;
+  text-align: center;
+}
+.btn-submit {
+  padding: 10px 17px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: auto;
+  margin-top: 10px;
+  text-align: center;
+}
+.btn-submit:hover {
+  background-color: #45a049;
+}
 </style>
 {% endblock %}
