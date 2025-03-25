@@ -1,22 +1,186 @@
 {% extends "base.html" %}
+{% load static %}
+
 {% block title %}Registrar Claves Sistemas - TACAE{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-  <div class="card shadow-lg">
-    <div class="card-header bg-primary text-white text-center">
+<div class="register-page">
+  <!-- Contenedor con tarjeta -->
+  <div class="card-form">
+    <div class="card-header-form">
       <h2>Registrar Claves Sistemas</h2>
     </div>
-    <div class="card-body">
+    <div class="card-body-form">
       <form method="post">
         {% csrf_token %}
+        
         {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Guardar</button>
+        
+        <!-- Campo de fecha con Flatpickr -->
+        <!-- Suponiendo que en tu forms.py tienes un campo "fecha_declaracion" -->
+        <!-- y quieres un calendario emergente en lugar de <input type="date"> -->
+        
+        <!-- EJEMPLO de cómo podrías personalizarlo manualmente:
+        
+        <div class="mb-3">
+          <label for="id_fecha_declaracion" class="form-label">Fecha Declaración</label>
+          <input 
+            type="text" 
+            name="fecha_declaracion" 
+            id="id_fecha_declaracion" 
+            class="form-control" 
+            placeholder="Selecciona una fecha" 
+          >
+        </div>
+        
+        -->
+        
+        <button type="submit" class="btn-capsule btn-primary save-btn">
+          <i class="fas fa-save"></i> Guardar
+        </button>
       </form>
     </div>
-    <div class="card-footer text-center">
-      <a href="{% url 'carpetas:ver_carpeta' carpeta.id %}" class="btn btn-secondary">⬅ Volver</a>
+    <div class="card-footer-form">
+      <a href="{% url 'carpetas:ver_carpeta' carpeta.id %}" class="btn-capsule btn-secondary back-btn">
+        <i class="fas fa-arrow-left"></i> Volver
+      </a>
     </div>
   </div>
 </div>
+
+<!-- Font Awesome para íconos (si no está en base.html) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<!-- Estilos de la Tarjeta -->
+<style>
+/* Contenedor principal (debajo de la topbar) */
+.register-page {
+  max-width: 600px; /* Ajusta el ancho según tu preferencia */
+  margin: 80px auto 20px; /* Espacio superior para no tapar la topbar */
+  padding: 20px;
+}
+
+/* Tarjeta principal */
+.card-form {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+/* Encabezado degradado */
+.card-header-form {
+  background: linear-gradient(135deg, #003366, #0052cc);
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+}
+.card-header-form h2 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+/* Cuerpo del formulario */
+.card-body-form {
+  padding: 20px;
+}
+.card-body-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.card-body-form .form-group {
+  margin-bottom: 15px;
+}
+
+/* Footer de la tarjeta */
+.card-footer-form {
+  text-align: center;
+  background: #f8f9fa;
+  padding: 15px;
+}
+
+/* Botones tipo cápsula */
+.btn-capsule {
+  border-radius: 25px !important;
+  font-weight: bold;
+  padding: 10px 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  text-decoration: none;
+  transition: background 0.3s, transform 0.2s;
+}
+.btn-capsule:hover {
+  transform: scale(1.03);
+}
+
+/* Botón Guardar */
+.save-btn {
+  background-color: #003366;
+  color: #fff;
+  border: none;
+}
+.save-btn:hover {
+  background-color: #002244;
+}
+
+/* Botón Volver */
+.back-btn {
+  background-color: #6c757d;
+  color: #fff;
+  border: none;
+}
+.back-btn:hover {
+  background-color: #5a6268;
+}
+
+/* Ajustes a los inputs del formulario (opcional) */
+.card-body-form input[type="text"],
+.card-body-form input[type="password"],
+.card-body-form input[type="email"],
+.card-body-form input[type="number"],
+.card-body-form input[type="date"],
+.card-body-form select,
+.card-body-form textarea {
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  transition: border-color 0.3s ease;
+  width: 100%;
+}
+.card-body-form input:focus,
+.card-body-form select:focus,
+.card-body-form textarea:focus {
+  outline: none;
+  border-color: #0052cc;
+}
+</style>
+
+<!-- 1) Estilos de Flatpickr -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<!-- 2) Script de Flatpickr -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Suponiendo que tu campo se llama "fecha_declaracion" y su ID es "id_fecha_declaracion"
+  // (Django suele generarlo automáticamente si usas forms, o lo defines manualmente).
+  // Verifica el ID en el HTML resultante o define manualmente <input id="id_fecha_declaracion" ...> en tu plantilla.
+
+  const fechaCampo = document.getElementById('id_fecha_declaracion');
+  if (fechaCampo) {
+    // Inicializa Flatpickr en ese campo
+    flatpickr(fechaCampo, {
+      dateFormat: "Y-m-d", // Ajusta el formato a tu gusto
+      // Otras opciones:
+      // minDate: "today",
+      // maxDate: "2025-12-31",
+      // enableTime: true, 
+      // etc.
+    });
+  }
+});
+</script>
 {% endblock %}
