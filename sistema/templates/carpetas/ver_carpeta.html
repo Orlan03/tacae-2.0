@@ -2,7 +2,55 @@
 {% load static %}
 {% block title %}📂 {{ carpeta.nombre }} - TACAE{% endblock %}
 
+
+
 {% block content %}
+
+
+{% if carpeta.nombre|lower == "informes periciales grupo tacae" %}
+  <!-- Aquí va el contenido exclusivo para esta carpeta -->
+  <div class="container my-4">
+    <!-- Encabezado específico para Informes Periciales -->
+    <div class="bg-info text-white p-4 rounded text-center mb-4">
+      <h2>Informes Periciales - Grupo TACAE</h2>
+      <p>Solo se pueden crear carpetas y subir documentos</p>
+    </div>
+    
+    <!-- Botones de acción -->
+    <div class="text-center mb-4">
+      <a href="{% url 'carpetas:crear_carpeta' %}" class="btn btn-primary me-2">
+        <i class="fas fa-folder-plus"></i> Crear Carpeta
+      </a>
+      <a href="{% url 'carpetas:subir_documento' carpeta.id %}" class="btn btn-success">
+        <i class="fas fa-upload"></i> Subir Documento
+      </a>
+    </div>
+    
+    <!-- Aquí podrías incluir el listado de carpetas, si lo deseas -->
+    {% if carpetas %}
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for carpeta in carpetas %}
+          <div class="col">
+            <div class="card h-100 shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title">{{ carpeta.nombre }}</h5>
+                <p class="card-text">{{ carpeta.descripcion }}</p>
+              </div>
+              <div class="card-footer text-center">
+                <a href="{% url 'carpetas:ver_carpeta' carpeta.id %}" class="btn btn-outline-info btn-sm">
+                  <i class="fas fa-folder-open"></i> Ver Carpeta
+                </a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-center text-muted">No hay carpetas creadas aún.</p>
+    {% endif %}
+  </div>
+{% endif %}
+
 <div class="container my-4">
   <!-- Encabezado con fondo degradado -->
   <div class="bg-primary text-white p-3 rounded d-flex align-items-center mb-3">

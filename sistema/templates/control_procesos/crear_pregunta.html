@@ -1,11 +1,13 @@
 {% extends "base.html" %}
-{% block title %}Crear Pregunta - TACAE{% endblock %}
+{% load static %}
+
+{% block title %}Registrar Claves Sistemas - TACAE{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
   <div class="card shadow-lg">
     <div class="card-header bg-primary text-white text-center">
-      <h2>Registrar Pregunta</h2>
+      <h2>Registrar Claves Sistemas</h2>
     </div>
     <div class="card-body">
       <form method="post">
@@ -20,3 +22,29 @@
   </div>
 </div>
 {% endblock %}
+
+<style>
+/* Ajustes para los inputs del formulario */
+.card-body input[type="text"],
+.card-body input[type="password"],
+.card-body input[type="email"],
+.card-body input[type="number"],
+.card-body input[type="date"],
+.card-body select,
+.card-body textarea {
+  width: 100%;
+  max-width: 400px; /* Limita el ancho máximo a 400px */
+  margin: 0 auto;   /* Centra los inputs en su contenedor */
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  transition: border-color 0.3s ease;
+  display: block;
+}
+.card-body input:focus,
+.card-body select:focus,
+.card-body textarea:focus {
+  outline: none;
+  border-color: #0052cc;
+}
+</style>
