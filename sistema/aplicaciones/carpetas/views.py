@@ -31,6 +31,7 @@ def listar_carpetas(request):
         nombre="CXC TACAE", 
         padre=control_procesos
     )
+    
     datos_grupo, _ = Carpeta.objects.get_or_create(nombre="Datos Grupo TACAE", padre=control_procesos)
 
     # Crear las subcarpetas dentro de "Datos Grupo TACAE"

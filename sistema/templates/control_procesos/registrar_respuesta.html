@@ -1,87 +1,178 @@
 {% extends "base.html" %}
-{% block title %}📩 Registrar Respuesta{% endblock %}
+{% load static %}
+
+{% block title %}📩 Registrar Respuesta - TACAE{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="card shadow-lg">
-        <div class="card-header bg-success text-white">
-            <h4 class="mb-0">📩 Registrar Nueva Respuesta</h4>
-        </div>
-        <div class="card-body">
-            
-            {% if form.errors %}
-                <div class="alert alert-danger">
-                    <strong>⚠️ Error:</strong> Por favor corrige los errores en el formulario.
-                    <ul>
-                        {% for field, errors in form.errors.items %}
-                            {% for error in errors %}
-                                <li>{{ field|title }}: {{ error }}</li>
-                            {% endfor %}
-                        {% endfor %}
-                    </ul>
-                </div>
-            {% endif %}
-
-            <form method="POST">
-                {% csrf_token %}
-                
-                <div class="mb-3">
-                    <label for="{{ form.proceso.id_for_label }}" class="form-label">📄 Proceso</label>
-                    {{ form.proceso }}
-                </div>
-
-                <div class="mb-3">
-                    <label for="{{ form.fecha_respuesta.id_for_label }}" class="form-label">📅 Fecha de Respuesta</label>
-                    {{ form.fecha_respuesta }}
-                </div>
-
-                <div class="mb-3">
-                    <label for="{{ form.calificacion.id_for_label }}" class="form-label">⭐ Calificación</label>
-                    {{ form.calificacion }}
-                </div>
-
-                <div class="mb-3">
-                    <label for="{{ form.fecha_cumplimiento.id_for_label }}" class="form-label">📅 Fecha de Cumplimiento</label>
-                    {{ form.fecha_cumplimiento }}
-                </div>
-
-                <div class="mb-3">
-                    <label for="{{ form.observaciones.id_for_label }}" class="form-label">📝 Observaciones</label>
-                    {{ form.observaciones }}
-                </div>
-
-                <button type="submit" class="btn btn-success btn-lg">
-                    💾 Guardar Respuesta
-                </button>
-                
-                <a href="javascript:history.back()" class="btn btn-secondary btn-lg">
-                    ⬅ Volver
-                </a>
-            </form>
-
-        </div>
+<div class="register-page">
+  <div class="card-form">
+    <!-- Encabezado degradado -->
+    <div class="card-header-form bg-success text-white">
+      <h2>📩 Registrar Nueva Respuesta</h2>
     </div>
+    <!-- Cuerpo del formulario -->
+    <div class="card-body-form">
+      {% if form.errors %}
+        <div class="alert alert-danger">
+          <strong>⚠️ Error:</strong> Por favor corrige los errores en el formulario.
+          <ul>
+            {% for field, errors in form.errors.items %}
+              {% for error in errors %}
+                <li>{{ field|title }}: {{ error }}</li>
+              {% endfor %}
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+      <form method="POST" novalidate>
+        {% csrf_token %}
+        <!-- Campo: Proceso -->
+        <div class="mb-3">
+          <label for="{{ form.proceso.id_for_label }}" class="form-label">📄 Proceso</label>
+          {{ form.proceso }}
+        </div>
+        <!-- Campo: Fecha de Respuesta -->
+        <div class="mb-3">
+          <label for="{{ form.fecha_respuesta.id_for_label }}" class="form-label">📅 Fecha de Respuesta</label>
+          {{ form.fecha_respuesta }}
+        </div>
+        <!-- Campo: Calificación -->
+        <div class="mb-3">
+          <label for="{{ form.calificacion.id_for_label }}" class="form-label">⭐ Calificación</label>
+          {{ form.calificacion }}
+        </div>
+        <!-- Campo: Fecha de Cumplimiento -->
+        <div class="mb-3">
+          <label for="{{ form.fecha_cumplimiento.id_for_label }}" class="form-label">📅 Fecha de Cumplimiento</label>
+          {{ form.fecha_cumplimiento }}
+        </div>
+        <!-- Campo: Observaciones -->
+        <div class="mb-3">
+          <label for="{{ form.observaciones.id_for_label }}" class="form-label">📝 Observaciones</label>
+          {{ form.observaciones }}
+        </div>
+        <div class="form-actions text-center mt-3">
+          <button type="submit" class="btn-capsule btn-gradient save-btn">
+            <i class="fas fa-save"></i> Guardar Respuesta
+          </button>
+          <a href="javascript:history.back()" class="btn-capsule btn-outline-dark back-btn">
+            <i class="fas fa-arrow-left"></i> Volver
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 
-<!-- 🚀 Estilos Mejorados -->
-<style>
-    .card {
-        max-width: 600px;
-        margin: auto;
-        border-radius: 10px;
-    }
-    
-    .btn-lg {
-        width: 100%;
-        margin-top: 10px;
-    }
-    
-    input, select, textarea {
-        width: 100%;
-        padding: 8px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-    }
-</style>
+<!-- Font Awesome (si no está en base.html) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
+<style>
+/* Contenedor principal */
+.register-page {
+  max-width: 600px;
+  margin: 80px auto 20px;
+  padding: 20px;
+}
+
+/* Tarjeta principal */
+.card-form {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* Encabezado degradado */
+.card-header-form {
+  background: linear-gradient(135deg, #28a745, #218838);
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+.card-header-form h2 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+/* Cuerpo del formulario */
+.card-body-form {
+  padding: 20px;
+}
+.card-body-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Acciones del formulario */
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* Botones tipo cápsula */
+.btn-capsule {
+  border-radius: 25px !important;
+  font-weight: bold;
+  padding: 10px 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  text-decoration: none;
+  transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+}
+.btn-capsule:hover {
+  transform: scale(1.03);
+}
+
+/* Botón con gradiente (Guardar) */
+.btn-gradient {
+  background: linear-gradient(135deg, #28a745, #218838);
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+.btn-gradient:hover {
+  background: linear-gradient(135deg, #1e7e34, #1c7430);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* Botón Outline (Volver) */
+.btn-outline-dark {
+  background-color: #f8f9fa;
+  border: 2px solid #333;
+  color: #333;
+}
+.btn-outline-dark:hover {
+  background-color: #333;
+  color: #fff;
+}
+
+/* Estilos para los inputs */
+.card-body-form input[type="text"],
+.card-body-form input[type="password"],
+.card-body-form input[type="email"],
+.card-body-form input[type="number"],
+.card-body-form input[type="date"],
+.card-body-form select,
+.card-body-form textarea {
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  padding: 8px;
+  font-size: 0.9rem;
+  transition: border-color 0.3s ease;
+  width: 100%;
+  resize: vertical;
+}
+.card-body-form input:focus,
+.card-body-form select:focus,
+.card-body-form textarea:focus {
+  outline: none;
+  border-color: #218838;
+}
+</style>
 {% endblock %}

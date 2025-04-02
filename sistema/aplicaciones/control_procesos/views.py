@@ -4,6 +4,8 @@ from aplicaciones.carpetas.models import Carpeta
 from .forms import *
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+import datetime
+
 
 def obtener_todas_subcarpetas(carpeta, visitadas=None):
     """Recupera todas las subcarpetas dentro de una carpeta, sin importar el nivel"""
@@ -182,7 +184,42 @@ def listar_respuestas_por_nombre(request, carpeta_id):
         'carpeta': carpeta_respuesta,
         'respuestas': respuestas,
     })
-    
+
+@login_required
+def listar_respuestas(request):
+    respuestas = Respuesta.objects.all()  # Ajusta según tus necesidades
+    return render(request, 'control_procesos/listar_respuestas.html', {'respuestas': respuestas})
+
+@login_required
+
+@login_required
+def editar_respuesta(request, respuesta_id):
+    respuesta = get_object_or_404(Respuesta, id=respuesta_id)
+    if request.method == "POST":
+        form = RespuestaForm(request.POST, instance=respuesta)
+        if form.is_valid():
+            # Guardar sin commit para modificar el objeto
+            respuesta_instance = form.save(commit=False)
+            # Si el campo fecha_respuesta está vacío, asignamos la fecha actual
+            if not respuesta_instance.fecha_respuesta:
+                respuesta_instance.fecha_respuesta = datetime.date.today()
+            respuesta_instance.save()
+            # Redirige a la carpeta asociada (ajusta según tu flujo)
+            return redirect('carpetas:ver_carpeta', respuesta_instance.carpeta.id)
+    else:
+        form = RespuestaForm(instance=respuesta)
+    return render(request, 'control_procesos/editar_respuesta.html', {'form': form, 'respuesta': respuesta})
+
+
+
+@login_required
+def eliminar_respuesta(request, respuesta_id):
+    respuesta = get_object_or_404(Respuesta, id=respuesta_id)
+    if request.method == "POST":
+        respuesta.delete()
+        # Redirige a la lista de respuestas o a la carpeta correspondiente
+        return redirect('respuestas:listar_respuestas')
+    return render(request, 'respuestas/eliminar_respuesta.html', {'respuesta': respuesta})
     
 ######################### CUENTAS POR COBRAR #############################
 
