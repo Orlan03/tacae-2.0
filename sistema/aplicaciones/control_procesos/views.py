@@ -120,42 +120,43 @@ def editar_proceso(request, proceso_id):
 ##############################Respuestas#####################################3
 
 @login_required
+@login_required
 def registrar_respuesta(request, carpeta_id):
-    """Registra una nueva respuesta y la asocia a la carpeta correspondiente en 'Respuestas'"""
-    carpeta_respuesta = get_object_or_404(Carpeta, id=carpeta_id)
+    """Registra una nueva respuesta, con un menú desplegable de procesos organizados por carpeta."""
+    carpeta = get_object_or_404(Carpeta, id=carpeta_id)
 
     if request.method == "POST":
         form = RespuestaForm(request.POST)
         if form.is_valid():
-            respuesta = form.save(commit=False)
+            nueva_respuesta = form.save(commit=False)
+            # Asocia la respuesta a la carpeta donde se está registrando
+            nueva_respuesta.carpeta = carpeta
+            # Si necesitas asociarla a un Proceso concreto, obtén "proceso_id" del POST
+            proceso_id = request.POST.get('proceso_id')
+            if proceso_id:
+                # Ajusta la ForeignKey en Respuesta si tu modelo la tiene (por ejemplo, Respuesta.proceso = ...)
+                proceso_obj = get_object_or_404(Proceso, id=proceso_id)
+                nueva_respuesta.proceso = proceso_obj
 
-            # 💡 Aquí aseguramos que la respuesta se guarda en la carpeta correcta
-            respuesta.carpeta = carpeta_respuesta  # 🔥 Asignamos la carpeta de 'Respuestas'
-            respuesta.save()
-
+            nueva_respuesta.save()
             messages.success(request, "✅ Respuesta registrada correctamente.")
-            return redirect("carpetas:ver_carpeta", carpeta_id=carpeta_respuesta.id)
-
+            return redirect("carpetas:ver_carpeta", carpeta_id=carpeta.id)
     else:
         form = RespuestaForm()
 
+    # Construimos el diccionario: carpeta -> procesos
+    carpetas_con_procesos = {}
+    todas_carpetas = Carpeta.objects.all()
+    for c in todas_carpetas:
+        procesos = Proceso.objects.filter(carpeta=c)
+        if procesos.exists():
+            carpetas_con_procesos[c] = procesos
+
     return render(request, "control_procesos/registrar_respuesta.html", {
         "form": form,
-        "carpeta": carpeta_respuesta
+        "carpeta": carpeta,
+        "carpetas_con_procesos": carpetas_con_procesos,  # Para el menú desplegable
     })
-
-
-
-
-def obtener_todas_subcarpetas(carpeta, lista=None):
-    if lista is None:
-        lista = [carpeta]
-    for sub in carpeta.subcarpetas.all():
-        lista.append(sub)
-        obtener_todas_subcarpetas(sub, lista)
-    return lista
-
-
 @login_required
 def listar_respuestas_subcarpeta(request, carpeta_id):
     """Lista las respuestas de una subcarpeta en 'Respuestas'."""

@@ -20,6 +20,11 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LOGIN_URL = 'login'  # Nombre de la URL donde está la vista de login
 
+AUTHENTICATION_BACKENDS = [
+    'aplicaciones.usuarios.backends.UsernameOrCedulaBackend', 
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 
 
 # Quick-start development settings - unsuitable for production

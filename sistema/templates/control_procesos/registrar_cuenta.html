@@ -1,141 +1,60 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %}Registrar CXC{% endblock %}
+
 {% block content %}
-<div class="centered-page">
-  <div class="card custom-card p-4">
-    <div class="card-header text-center bg-transparent border-0">
-      <img src="{% static 'img/tacae.jpg' %}" alt="TACAE Logo" class="logo mb-2">
-      <h3 class="fw-bold">Registrar Nuevo Cobro</h3>
+<div class="container mt-5">
+  <div class="card shadow" style="border-radius: 8px;">
+    <!-- Encabezado -->
+    <div class="card-header text-white" style="background-color: #003366; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+      <h3 class="mb-0">Registrar CXC</h3>
     </div>
+
+    <!-- Formulario -->
     <div class="card-body">
-      <form method="POST">
+      <form method="post">
         {% csrf_token %}
 
-        <!-- Selección de Proceso -->
         <div class="mb-3">
-          <label class="form-label fw-bold">
-            <i class="fas fa-folder-open text-warning"></i> Seleccionar Proceso
-          </label>
-          <select name="proceso" class="form-select custom-select">
-            {% for carpeta, procesos in carpetas_con_procesos.items %}
-              <optgroup label="📂 {{ carpeta.nombre }}">
-                {% for proceso in procesos %}
-                  <option value="{{ proceso.id }}">📝 {{ proceso.proceso }}</option>
-                {% endfor %}
-              </optgroup>
-            {% endfor %}
-          </select>
+          <label for="cliente" class="form-label">Cliente:</label>
+          {{ form.cliente }}
         </div>
 
-        <!-- Valor Cobrado -->
         <div class="mb-3">
-          <label class="form-label fw-bold">
-            <i class="fas fa-dollar-sign text-success"></i> Valor Cobrado
-          </label>
-          <div class="input-group">
-            <span class="input-group-text custom-input-group-text">$</span>
-            {{ form.cobro }}
-          </div>
+          <label for="factura" class="form-label"># Factura:</label>
+          {{ form.factura }}
         </div>
 
-        <!-- Observaciones -->
         <div class="mb-3">
-          <label class="form-label fw-bold">
-            <i class="fas fa-comment text-info"></i> Observaciones
-          </label>
+          <label for="fecha" class="form-label">Fecha:</label>
+          {{ form.fecha }}
+        </div>
+
+        <div class="mb-3">
+          <label for="real" class="form-label">Real:</label>
+          {{ form.real }}
+        </div>
+
+        <div class="mb-3">
+          <label for="observacion" class="form-label">Observación:</label>
           {{ form.observacion }}
         </div>
 
-        <!-- Botones -->
-        <div class="d-flex justify-content-between">
-          <a href="{% url 'carpetas:ver_carpeta' carpeta.id %}" class="btn btn-outline-light custom-btn">
-            ⬅ Volver
-          </a>
-          <button type="submit" class="btn btn-primary custom-btn">
-            💾 Guardar Cobro
-          </button>
+        <!-- Botón Registrar -->
+        <div class="d-grid mt-4">
+          <button type="submit" class="btn btn-primary btn-lg" style="background-color: #003366;">Registrar</button>
         </div>
       </form>
+
+      <!-- Botón Cancelar -->
+      <div class="text-center mt-3">
+        <a href="{% url 'carpetas:ver_carpeta' carpeta.id %}" class="btn btn-outline-dark">Cancelar</a>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- Asegurar que FontAwesome se cargue para iconos -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-<style>
-  /* Ocupa toda la ventana y centra vertical/horizontal */
-  .centered-page {
-    min-height: 100vh;              /* Ocupa toda la altura de la ventana */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: #454de5;            /* Fondo oscuro o degradado si deseas */
-  }
-
-  /* Card personalizada */
-  .custom-card {
-    background: #e1dcdc;           /* Fondo gris oscuro */
-    color: #000000;
-    border-radius: 15px;
-    width: 100%;
-    max-width: 500px;              /* Ancho máximo */
-    box-shadow: 0 8px 20px rgba(139, 144, 175, 0.5);
-  }
-
-  .card-header {
-    border-bottom: none;
-  }
-  .logo {
-    max-width: 100px;
-    border-radius: 10px;
-  }
-
-  /* Estilos para el select e inputs */
-  .custom-select {
-    background: #2c2c2c;
-    color: #fff;
-    border: 1px solid #555;
-  }
-  .custom-select option {
-    background: #2c2c2c;
-    color: #fff;
-  }
-  input.form-control,
-  textarea.form-control {
-    background: #2c2c2c;
-    color: #fff;
-    border: 1px solid #555;
-  }
-
-  /* Grupo de input para valor */
-  .custom-input-group-text {
-    background: #28a745;
-    color: #fff;
-    border: none;
-  }
-
-  /* Botones personalizados */
-  .custom-btn {
-    border-radius: 5px;
-    font-weight: bold;
-    font-family: inherit;
-  }
-  .btn-outline-light.custom-btn {
-    border-color: #fff;
-    color: #fff;
-  }
-  .btn-outline-light.custom-btn:hover {
-    background: #fff;
-    color: #000;
-  }
-  .btn-primary.custom-btn {
-    background: #007bff;
-    border: none;
-  }
-  .btn-primary.custom-btn:hover {
-    background: #0056b3;
-  }
-</style>
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 {% endblock %}

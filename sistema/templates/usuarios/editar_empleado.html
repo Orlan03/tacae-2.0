@@ -11,80 +11,86 @@
     </div>
 
     {% if messages %}
-        <div class="messages">
-            <ul>
-                {% for message in messages %}
-                    <li style="color: red;">{{ message }}</li>
-                {% endfor %}
-            </ul>
-        </div>  
+    <div class="messages">
+        <ul>
+            {% for message in messages %}
+            <li style="color: green;">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
     {% endif %}
 
     <form method="post" class="form-register">
         {% csrf_token %}
+        {{ form.non_field_errors }}
         
         <!-- Nombres -->
         <div class="form-group">
-            <label for="nombres">
+            <label for="id_nombres">
                 <img src="{% static 'img/nombres_icon.png' %}" alt="Nombres" class="form-icon">
             </label>
-            <input type="text" name="nombres" id="nombres" value="{{ empleado.nombres }}" placeholder="Nombres completos">
+            {{ form.nombres }}
         </div>
         
         <!-- Apellidos -->
         <div class="form-group">
-            <label for="apellidos">
+            <label for="id_apellidos">
                 <img src="{% static 'img/nombres_icon.png' %}" alt="Apellidos" class="form-icon">
             </label>
-            <input type="text" name="apellidos" id="apellidos" value="{{ empleado.apellidos }}" placeholder="Apellidos completos">
+            {{ form.apellidos }}
         </div>
 
         <!-- Cédula -->
         <div class="form-group">
-            <label for="cedula">
+            <label for="id_cedula">
                 <img src="{% static 'img/cedula_icon.png' %}" alt="Cédula" class="form-icon">
             </label>
-            <input type="text" name="cedula" id="cedula" value="{{ empleado.cedula }}" placeholder="Número de cédula">
+            {{ form.cedula }}
         </div>
 
-        <!-- Número de celular -->
+        <!-- Celular -->
         <div class="form-group">
-            <label for="celular">
+            <label for="id_celular">
                 <img src="{% static 'img/celular_icon (2).png' %}" alt="Celular" class="form-icon">
             </label>
-            <input type="text" name="celular" id="celular" value="{{ empleado.celular }}" placeholder="Número de celular">
+            {{ form.celular }}
         </div>
 
         <!-- Nombre de usuario -->
         <div class="form-group">
-            <label for="username">
+            <label for="id_username">
                 <img src="{% static 'img/nombres_icon.png' %}" alt="Nombre de usuario" class="form-icon">
             </label>
-            <input type="text" name="username" id="username" value="{{ empleado.user.username }}" placeholder="Nombre de usuario">
+            {{ form.username }}
         </div>
 
-        <!-- Contraseña -->
+        <!-- Contraseña (nueva, opcional) -->
         <div class="form-group">
-            <label for="password">
+            <label for="id_password">
                 <img src="{% static 'img/password_icon.png' %}" alt="Contraseña" class="form-icon">
             </label>
-            <input type="password" name="password" id="password" placeholder="Ingrese una contraseña">
+            {{ form.password }}
         </div>
 
-        <!-- Confirmar Contraseña -->
+        <!-- Confirmar Contraseña (nueva, opcional) -->
         <div class="form-group">
-            <label for="confirm_password">
+            <label for="id_confirm_password">
                 <img src="{% static 'img/password_icon.png' %}" alt="Confirmar Contraseña" class="form-icon">
             </label>
-            <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirme la contraseña">
+            {{ form.confirm_password }}
         </div>
 
-        <!-- Botón Guardar Cambios (centrado) -->
+        <!-- Botón Guardar Cambios -->
         <div class="form-buttons">
             <button type="submit" class="btn-submit">Guardar Cambios</button>
         </div>
     </form>
 </div>
+
+<style>
+/* (Aquí puedes incluir los estilos que ya tienes) */
+</style>
+
 
 <style>
 /* ---------- RESETEO Y FUENTE ---------- */
@@ -144,43 +150,37 @@ h2 {
 .form-group {
   display: flex;
   align-items: center;
-  gap: 15px; /* Espacio entre el ícono y el input */
+  gap: 15px;
   margin-bottom: 20px;
 }
-
-/* Contenedor fijo para la etiqueta (ícono) */
 .form-group label {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 40px; /* Reserva un espacio fijo para el ícono */
+  min-width: 40px;
 }
-
 .form-icon {
-  width: 30px; /* Tamaño fijo para todos los íconos */
+  width: 30px;
   height: 30px;
   object-fit: contain;
 }
-
-.form-group input {
+.form-register input {
   padding: 12px;
   font-size: 14px;
   border: 1px solid #ddd;
   border-radius: 20px;
   width: 100%;
 }
-.form-group input:focus {
+.form-register input:focus {
   border-color: #4CAF50;
   outline: none;
 }
-
-/* Placeholder */
-.form-group input::placeholder {
+.form-register input::placeholder {
   color: #717070;
   font-style: italic;
 }
 
-/* ---------- BOTÓN CENTRADO ---------- */
+/* ---------- BOTÓN ---------- */
 .form-buttons {
   margin-top: 30px;
   text-align: center;
@@ -194,9 +194,6 @@ h2 {
   font-size: 14px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  width: auto;
-  margin-top: 10px;
-  text-align: center;
 }
 .btn-submit:hover {
   background-color: #45a049;

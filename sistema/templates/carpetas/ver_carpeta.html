@@ -21,15 +21,23 @@
   <!-- Botones de acción generales -->
   <div class="my-3 text-center">
     {% comment %}
-      Si el padre es "Procesos Pendientes", se muestra únicamente "Registrar Proceso".
-      De lo contrario, si la carpeta no es de los tipos restringidos ni "Control de Procesos", se muestra "Crear Subcarpeta".
+      - Si el padre es "Procesos Pendientes", se muestra "Registrar Proceso".
+      - Se muestra "Crear Subcarpeta" si:
+         a) La carpeta tiene padre, no está en tipos restringidos ni es "Control de Procesos"
+         o
+         b) El nombre de la carpeta es "informes periciales grupo tacae".
     {% endcomment %}
     {% if carpeta.padre and carpeta.padre.nombre == "Procesos Pendientes" %}
       <a href="{% url 'procesos:registrar_proceso' carpeta.id %}" class="btn btn-outline-success">
         <i class="fas fa-clipboard-list"></i> Registrar Proceso
       </a>
-   
-    {% elif carpeta.nombre|lower not in "claves,firmas,cuentas,preguntas,sistemas,bancos" and carpeta.nombre != "Control de Procesos" %}
+    {% endif %}
+    
+    {% if carpeta.padre and carpeta.nombre|lower not in "claves,firmas,cuentas,preguntas,sistemas,bancos" and carpeta.nombre != "Control de Procesos" %}
+      <button class="btn btn-outline-light bg-secondary" data-bs-toggle="modal" data-bs-target="#crearSubcarpetaModal">
+        <i class="fas fa-folder-plus"></i> Crear Subcarpeta
+      </button>
+    {% elif carpeta.nombre|lower == "informes periciales grupo tacae" %}
       <button class="btn btn-outline-light bg-secondary" data-bs-toggle="modal" data-bs-target="#crearSubcarpetaModal">
         <i class="fas fa-folder-plus"></i> Crear Subcarpeta
       </button>
@@ -50,52 +58,82 @@
           <i class="fas fa-file-alt"></i> Registrar nuevo CXC
         </a>
       </div>
-      
     {% endif %}
   {% endif %}
+
   {% if carpeta.padre and carpeta.padre.nombre|lower == "cxc tacae" %}
-  <h4 class="mt-4">CXC</h4>
-  {% if cxc_list %}
-    <table class="table table-bordered table-hover">
-      <thead class="table-dark">
-        <tr>
-          <th>Cliente</th>
-          <th>N° Factura</th>
-          <th>Fecha</th>
-          <th>Real</th>
-          <th>Observación</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for cxc in cxc_list %}
-          <tr>
-            <td>{{ cxc.cliente }}</td>
-            <td>{{ cxc.numero_factura }}</td>
-            <td>{{ cxc.fecha|date:"d/m/Y" }}</td>
-            <td>{{ cxc.real }}</td>
-            <td>{{ cxc.observacion }}</td>
-            <td>
-              <a href="{% url 'control_procesos:editar_cxc' cxc.id %}" class="btn btn-info btn-sm">Editar</a>
-              <a href="{% url 'control_procesos:eliminar_cxc' cxc.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar este registro CXC?');">Eliminar</a>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  {% else %}
-    <p class="text-muted">No hay registros de CXC.</p>
+    <h4 class="mt-4">CXC</h4>
+    {% if cxcs %}
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover" id="tableCxc">
+          <thead class="table-dark">
+            <tr>
+              <th>Cliente</th>
+              <th>N° Factura</th>
+              <th>Fecha</th>
+              <th>Real</th>
+              <th>Observación</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for cxc in cxcs %}
+              <tr>
+                <td>{{ cxc.cliente }}</td>
+                <td>{{ cxc.numero_factura }}</td>
+                <td>{{ cxc.fecha|date:"d/m/Y" }}</td>
+                <td>{{ cxc.real }}</td>
+                <td>{{ cxc.observacion }}</td>
+                <td>
+                  <a href="{% url 'control_procesos:editar_cxc' cxc.id %}" class="btn btn-info btn-sm">Editar</a>
+                  <a href="{% url 'control_procesos:eliminar_cxc' cxc.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar este registro CXC?');">Eliminar</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="text-muted">No hay registros de CXC.</p>
+    {% endif %}
   {% endif %}
-{% endif %}
 
   {# Se muestran subcarpetas y documentos si la carpeta no pertenece a los tipos restringidos #}
   {% if carpeta.nombre|lower not in "claves,firmas,cuentas,preguntas,sistemas,bancos" %}
     {% if not carpeta.padre %}
-      <!-- Sección de Subcarpetas -->
-      <div class="mb-4">
-        <h2 class="h5 text-center">Subcarpetas</h2>
+      <!-- Subcarpetas (sin encabezado) -->
+      {% if carpeta.subcarpetas.all %}
+        <div class="row row-cols-2 row-cols-md-4 g-3 mb-4">
+          {% for sub in carpeta.subcarpetas.all %}
+            <div class="col">
+              <div class="card text-center">
+                <div class="card-body p-2">
+                  <i class="fas fa-folder fa-2x text-warning mb-2"></i>
+                  <h6 class="card-title">{{ sub.nombre }}</h6>
+                  <a href="{% url 'carpetas:ver_carpeta' sub.id %}" class="btn btn-sm btn-outline-primary">Ver</a>
+                  <a href="{% url 'carpetas:eliminar_carpeta' sub.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Eliminar esta subcarpeta?');">Eliminar</a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+      
+      <!-- Documentos (sin encabezado) -->
+      {% if carpeta.documentos.all %}
+        <div class="list-group mb-4">
+          {% for doc in carpeta.documentos.all %}
+            <a href="{{ doc.archivo.url }}" target="_blank" class="list-group-item list-group-item-action">
+              <i class="fas fa-file-alt me-2"></i>{{ doc.nombre }}
+            </a>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% else %}
+      {% if carpeta.padre.nombre != "Procesos Pendientes" %}
+        <!-- Subcarpetas (sin encabezado) -->
         {% if carpeta.subcarpetas.all %}
-          <div class="row row-cols-2 row-cols-md-4 g-3">
+          <div class="row row-cols-2 row-cols-md-4 g-3 mb-4">
             {% for sub in carpeta.subcarpetas.all %}
               <div class="col">
                 <div class="card text-center">
@@ -109,66 +147,41 @@
               </div>
             {% endfor %}
           </div>
-        {% else %}
-          <p class="text-center text-muted">No hay subcarpetas.</p>
         {% endif %}
-      </div>
-      
-      <!-- Sección de Documentos -->
-      <div class="mb-4">
-        <h2 class="h5 text-center">Documentos</h2>
+        
+        <!-- Documentos (sin encabezado) -->
         {% if carpeta.documentos.all %}
-          <div class="list-group">
+          <div class="list-group mb-4">
             {% for doc in carpeta.documentos.all %}
               <a href="{{ doc.archivo.url }}" target="_blank" class="list-group-item list-group-item-action">
                 <i class="fas fa-file-alt me-2"></i>{{ doc.nombre }}
               </a>
             {% endfor %}
           </div>
-        {% else %}
-          <p class="text-center text-muted">No hay documentos.</p>
         {% endif %}
-      </div>
-    {% else %}
-      {% if carpeta.padre.nombre != "Procesos Pendientes" %}
-        <div class="mb-4">
-          <h2 class="h5 text-center">Subcarpetas</h2>
-          {% if carpeta.subcarpetas.all %}
-            <div class="row row-cols-2 row-cols-md-4 g-3">
-              {% for sub in carpeta.subcarpetas.all %}
-                <div class="col">
-                  <div class="card text-center">
-                    <div class="card-body p-2">
-                      <i class="fas fa-folder fa-2x text-warning mb-2"></i>
-                      <h6 class="card-title">{{ sub.nombre }}</h6>
-                      <a href="{% url 'carpetas:ver_carpeta' sub.id %}" class="btn btn-sm btn-outline-primary">Ver</a>
-                      <a href="{% url 'carpetas:eliminar_carpeta' sub.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Eliminar esta subcarpeta?');">Eliminar</a>
-                    </div>
-                  </div>
-                </div>
-              {% endfor %}
-            </div>
-          {% else %}
-            <p class="text-center text-muted">No hay subcarpetas.</p>
-          {% endif %}
-        </div>
-        
-        <div class="mb-4">
-          <h2 class="h5 text-center">Documentos</h2>
-          {% if carpeta.documentos.all %}
-            <div class="list-group">
-              {% for doc in carpeta.documentos.all %}
-                <a href="{{ doc.archivo.url }}" target="_blank" class="list-group-item list-group-item-action">
-                  <i class="fas fa-file-alt me-2"></i>{{ doc.nombre }}
-                </a>
-              {% endfor %}
-            </div>
-          {% else %}
-            <p class="text-center text-muted">No hay documentos.</p>
-          {% endif %}
-        </div>
       {% endif %}
     {% endif %}
+  {% endif %}
+
+  {# Botón para subir documento solo en "Informes Periciales Grupo TACAE" y sus subcarpetas #}
+  {% if carpeta.nombre|lower == "informes periciales grupo tacae" %}
+    <div class="text-center mb-3">
+      <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#crearDocumentoModal">
+        <i class="fas fa-upload"></i> Subir Documento
+      </button>
+    </div>
+  {% elif carpeta.padre and carpeta.padre.nombre|lower == "informes periciales grupo tacae" %}
+    <div class="text-center mb-3">
+      <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#crearDocumentoModal">
+        <i class="fas fa-upload"></i> Subir Documento
+      </button>
+    </div>
+  {% elif carpeta.padre and carpeta.padre.padre and carpeta.padre.padre.nombre|lower == "informes periciales grupo tacae" %}
+    <div class="text-center mb-3">
+      <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#crearDocumentoModal">
+        <i class="fas fa-upload"></i> Subir Documento
+      </button>
+    </div>
   {% endif %}
 
   {# Sección de Procesos: se muestra solo si el padre es "Procesos Pendientes" #}
@@ -208,54 +221,54 @@
           </table>
         </div>
       </div>
-    {% else %}
-      <p class="text-center text-muted">No hay procesos.</p>
     {% endif %}
   {% endif %}
+
+  {# Las demás secciones se mantienen iguales (cuentas por cobrar, respuestas, sistemas, cuentas, claves, firmas, bancos, preguntas) #}
   {% if carpeta.padre and carpeta.padre.nombre|lower == "cuentas por cobrar" %}
-  <h4 class="mt-4">📋 Cuentas por Cobrar</h4>
-  {% if cuentas %}
+    <h4 class="mt-4">📋 Cuentas por Cobrar</h4>
+    {% if cuentas %}
       <table class="table table-bordered">
-          <thead class="table-dark">
-              <tr>
-                  <th>Fecha</th>
-                  <th>Proceso</th>
-                  <th>responsable</th>
-                  <th>actor</th>
-                  <th>Valor</th>
-                  <th>Cobrado</th>
-                  <th>Saldo</th>
-                  <th>Observación</th>
-              </tr>
-          </thead>
-          <tbody>
-              {% for cuenta in cuentas %}
-                  <tr>
-                      <td>{{ cuenta.fecha|date:"d/m/Y" }}</td>
-                      <td>{{ cuenta.proceso.proceso }}</td>
-                      <td>{{ cuenta.proceso.responsable }}</td>
-                      <td>{{ cuenta.proceso.actor }}</td>
-                      <td>${{ cuenta.proceso.valor }}</td>
-                      <td>${{ cuenta.cobro|default:"0.00" }}</td>
-                      <td>${{ cuenta.saldo|default:"0.00" }}</td>
-                      <td>{{ cuenta.observacion|default:"-" }}</td>
-                  </tr>
-              {% endfor %}
-          </tbody>
-          <tfoot>
-              <tr class="table-success">
-                  <td colspan="4"><strong>Total:</strong></td>
-                  <td><strong>${{ total_cobrado }}</strong></td>  
-                  <td><strong>${{ total_saldo }}</strong></td>  
-                  <td></td>
-              </tr>
-          </tfoot>
+        <thead class="table-dark">
+          <tr>
+            <th>Fecha</th>
+            <th>Proceso</th>
+            <th>Responsable</th>
+            <th>Actor</th>
+            <th>Valor</th>
+            <th>Cobrado</th>
+            <th>Saldo</th>
+            <th>Observación</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for cuenta in cuentas %}
+            <tr>
+              <td>{{ cuenta.fecha|date:"d/m/Y" }}</td>
+              <td>{{ cuenta.proceso.proceso }}</td>
+              <td>{{ cuenta.proceso.responsable }}</td>
+              <td>{{ cuenta.proceso.actor }}</td>
+              <td>${{ cuenta.proceso.valor }}</td>
+              <td>${{ cuenta.cobro|default:"0.00" }}</td>
+              <td>${{ cuenta.saldo|default:"0.00" }}</td>
+              <td>{{ cuenta.observacion|default:"-" }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr class="table-success">
+            <td colspan="4"><strong>Total:</strong></td>
+            <td><strong>${{ total_cobrado }}</strong></td>  
+            <td><strong>${{ total_saldo }}</strong></td>  
+            <td></td>
+          </tr>
+        </tfoot>
       </table>
-  {% else %}
+    {% else %}
       <p class="text-muted">🚫 No hay cuentas por cobrar en esta carpeta.</p>
+    {% endif %}
   {% endif %}
-{% endif %}
-  {# Sección de Procesos: se muestra solo si el padre es "Procesos Pendientes" #}
+
   {% if carpeta.padre and carpeta.padre.nombre == "Respuestas" %}
     {% if carpeta.padre and carpeta.padre.nombre == "Respuestas" %}
       <a href="{% url 'procesos:registrar_respuesta' carpeta.id %}" class="btn btn-outline-success">
@@ -271,11 +284,10 @@
               <tr>
                 <th>Proceso</th>
                 <th>Fecha de respuesta</th>
-                <th>calificación</th>
+                <th>Calificación</th>
                 <th>Fecha de Cumplimiento</th>
-                <th>observación</th>
-                <th>acciones</th>
-
+                <th>Observación</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -283,14 +295,11 @@
                 <tr>
                   <td>{{ proceso.proceso }}</td>
                   <td>{{ proceso.fecha_respuesta }}</td>
-                  <td>{{ proceso.calificación}}</td>
+                  <td>{{ proceso.calificación }}</td>
                   <td>{{ proceso.fecha_cumplimiento }}</td>
                   <td>{{ proceso.observaciones }}</td>
-                  
-                  
                   <td>
                     <a href="{% url 'control_procesos:editar_respuesta' proceso.id %}" class="btn btn-info btn-sm">Editar</a>
-
                     <a href="{% url 'control_procesos:eliminar_proceso' proceso.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar este proceso?');">Eliminar</a>
                   </td>
                 </tr>
@@ -299,12 +308,9 @@
           </table>
         </div>
       </div>
-    {% else %}
-      <p class="text-center text-muted">No hay respuestas.</p>
     {% endif %}
   {% endif %}
 
-  {# Sección de Sistemas (solo si el nombre de la carpeta es "sistema") #}
   {% if carpeta.nombre|lower == "sistema" %}
     <div class="mb-4">
       <h4>Sistemas</h4>
@@ -328,7 +334,7 @@
                 <td>{{ item.usuario }}</td>
                 <td>{{ item.clave }}</td>
                 <td>
-                  <a href="{% url 'control_procesos:editar_sistema' item.id %}" class="btn btn-info btn-sm">✏️ Editar</a>
+                  <a href="{% url 'control_procesos:editar_sistema' item.id %}" class="btn btn-info btn-sm">✏ Editar</a>
                   <a href="{% url 'control_procesos:eliminar_sistema' item.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?');">
                     🗑 Eliminar
                   </a>
@@ -343,7 +349,6 @@
     </div>
   {% endif %}
 
-  {# Sección de Cuentas Especiales (solo si el nombre de la carpeta es "cuentas") #}
   {% if carpeta.nombre|lower == "cuentas" %}
     <div class="mb-4">
       <h4>Cuentas Especiales</h4>
@@ -355,7 +360,7 @@
           <thead class="table-dark">
             <tr>
               <th>Compañía</th>
-              <th>Institución financiera</th>
+              <th>Institución Financiera</th>
               <th>Número</th>
               <th>RUC / CI</th>
               <th>Usuario</th>
@@ -379,7 +384,7 @@
                 <td>{{ cta.clave_trush }}</td>
                 <td>{{ cta.clave_sut }}</td>
                 <td>
-                  <a href="{% url 'control_procesos:editar_cuenta_especial' cta.id %}" class="btn btn-info btn-sm">✏️ Editar</a>
+                  <a href="{% url 'control_procesos:editar_cuenta_especial' cta.id %}" class="btn btn-info btn-sm">✏ Editar</a>
                   <a href="{% url 'control_procesos:eliminar_cuenta_especial' cta.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar esta cuenta?');">
                     🗑 Eliminar
                   </a>
@@ -394,7 +399,6 @@
     </div>
   {% endif %}
 
-  {# Sección de Claves (solo si el nombre de la carpeta es "claves") #}
   {% if carpeta.nombre|lower == "claves" %}
     <div class="mb-4">
       <h4>Claves Sistemas</h4>
@@ -449,7 +453,6 @@
     </div>
   {% endif %}
 
-  {# Sección de Firmas (solo si el nombre de la carpeta es "firmas") #}
   {% if carpeta.nombre|lower == "firmas" %}
     <div class="mb-4">
       <h4>Firmas</h4>
@@ -486,7 +489,6 @@
     </div>
   {% endif %}
 
-  {# Sección de Bancos (solo si el nombre de la carpeta es "bancos") #}
   {% if carpeta.nombre|lower == "bancos" %}
     <div class="mb-4">
       <h4>🏦 Información de Bancos</h4>
@@ -531,7 +533,6 @@
     </div>
   {% endif %}
 
-  {# Sección de Preguntas (solo si el nombre de la carpeta es "preguntas") #}
   {% if carpeta.nombre|lower == "preguntas" %}
     <div class="mb-4">
       <h4>Preguntas y Respuestas</h4>
@@ -607,12 +608,111 @@
   </div>
 </div>
 
+{# Modal para Subir Documento (solo para "Informes Periciales Grupo TACAE" y sus subcarpetas) #}
+{% if carpeta.nombre|lower == "informes periciales grupo tacae" %}
+  <div class="modal fade" id="crearDocumentoModal" tabindex="-1" aria-labelledby="crearDocumentoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form method="POST" action="{% url 'carpetas:subir_documento' carpeta.id %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title" id="crearDocumentoModalLabel">Subir Documento</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="nombreDocumento" class="form-label">Nombre del Documento</label>
+              <input type="text" class="form-control" id="nombreDocumento" name="nombre" required>
+            </div>
+            <div class="mb-3">
+              <label for="archivoDocumento" class="form-label">Archivo</label>
+              <input type="file" class="form-control" id="archivoDocumento" name="archivo" required>
+            </div>
+            <div class="mb-3">
+              <label for="descripcionDocumento" class="form-label">Descripción (opcional)</label>
+              <textarea class="form-control" id="descripcionDocumento" name="descripcion"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Subir</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% elif carpeta.padre and carpeta.padre.nombre|lower == "informes periciales grupo tacae" %}
+  <div class="modal fade" id="crearDocumentoModal" tabindex="-1" aria-labelledby="crearDocumentoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form method="POST" action="{% url 'carpetas:subir_documento' carpeta.id %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title" id="crearDocumentoModalLabel">Subir Documento</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="nombreDocumento" class="form-label">Nombre del Documento</label>
+              <input type="text" class="form-control" id="nombreDocumento" name="nombre" required>
+            </div>
+            <div class="mb-3">
+              <label for="archivoDocumento" class="form-label">Archivo</label>
+              <input type="file" class="form-control" id="archivoDocumento" name="archivo" required>
+            </div>
+            <div class="mb-3">
+              <label for="descripcionDocumento" class="form-label">Descripción (opcional)</label>
+              <textarea class="form-control" id="descripcionDocumento" name="descripcion"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Subir</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% elif carpeta.padre and carpeta.padre.padre and carpeta.padre.padre.nombre|lower == "informes periciales grupo tacae" %}
+  <div class="modal fade" id="crearDocumentoModal" tabindex="-1" aria-labelledby="crearDocumentoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form method="POST" action="{% url 'carpetas:subir_documento' carpeta.id %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title" id="crearDocumentoModalLabel">Subir Documento</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="nombreDocumento" class="form-label">Nombre del Documento</label>
+              <input type="text" class="form-control" id="nombreDocumento" name="nombre" required>
+            </div>
+            <div class="mb-3">
+              <label for="archivoDocumento" class="form-label">Archivo</label>
+              <input type="file" class="form-control" id="archivoDocumento" name="archivo" required>
+            </div>
+            <div class="mb-3">
+              <label for="descripcionDocumento" class="form-label">Descripción (opcional)</label>
+              <textarea class="form-control" id="descripcionDocumento" name="descripcion"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Subir</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
 <!-- Script para filtros (si se usan en tus tablas) -->
 <script>
   function setupFilter(inputId, tableId) {
     document.getElementById(inputId)?.addEventListener('keyup', function () {
       const q = this.value.toLowerCase();
-      document.querySelectorAll(`#${tableId} tbody tr`).forEach(r => {
+      document.querySelectorAll('#' + tableId + ' tbody tr').forEach(r => {
         r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
       });
     });

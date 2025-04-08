@@ -36,16 +36,15 @@ class RespuestaForm(forms.ModelForm):
         required=False
     )
 
+
     class Meta:
         model = Respuesta
         fields = [
-            'proceso',
             'fecha_respuesta',
             'calificacion',
             'fecha_cumplimiento',
-            'observaciones'
+            'observaciones',
         ]
-        
         
 
 
