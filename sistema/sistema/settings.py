@@ -52,7 +52,9 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'aplicaciones.carpetas',
     'aplicaciones.control_procesos',
-    'aplicaciones.eventos'    
+    'aplicaciones.eventos',  
+
+  
 ]
 
 MIDDLEWARE = [

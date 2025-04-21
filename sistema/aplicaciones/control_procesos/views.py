@@ -231,6 +231,7 @@ def eliminar_respuesta(request, respuesta_id):
 def registrar_cuenta_por_cobrar(request, carpeta_id):
     """Registra un nuevo cobro, permitiendo seleccionar un proceso de forma organizada."""
     
+    # Carpeta “padre” desde la URL
     carpeta = get_object_or_404(Carpeta, id=carpeta_id)
 
     if request.method == "POST":
@@ -239,25 +240,24 @@ def registrar_cuenta_por_cobrar(request, carpeta_id):
             cuenta = form.save(commit=False)
             cuenta.carpeta = carpeta
             cuenta.save()
-            return redirect("carpetas:ver_carpeta", carpeta_id=carpeta.id)
-    
+            # Redirige correctamente a la vista de la carpeta padre
+            return redirect("carpetas:ver_carpeta", carpeta.id)
     else:
         form = CuentaPorCobrarForm()
 
-    # 🌟 Obtener procesos organizados por carpeta
+    # 🌟 Construyo el dict de carpetas → procesos sin pisar la variable 'carpeta'
     carpetas_con_procesos = {}
-    carpetas = Carpeta.objects.all()
-    
-    for carpeta in carpetas:
-        procesos = Proceso.objects.filter(carpeta=carpeta)
+    for c in Carpeta.objects.all():
+        procesos = Proceso.objects.filter(carpeta=c)
         if procesos.exists():
-            carpetas_con_procesos[carpeta] = procesos
+            carpetas_con_procesos[c] = procesos
 
     return render(request, "control_procesos/registrar_cuenta.html", {
         "form": form,
-        "carpeta": carpeta,
-        "carpetas_con_procesos": carpetas_con_procesos,  # Pasamos los procesos organizados
+        "carpeta": carpeta,                     # sigue siendo la carpeta padre
+        "carpetas_con_procesos": carpetas_con_procesos,
     })
+
     
 def editar_cuenta_por_cobrar(request, cuenta_id):
     """

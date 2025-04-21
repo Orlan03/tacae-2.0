@@ -121,13 +121,25 @@ def ver_carpeta(request, carpeta_id):
     cxcs = carpeta.cxcs.all()  # Si tu modelo CXC tiene related_name='cxcs'
     
     # Respuestas y Cuentas
-    Respuestaespuestas = Respuesta.objects.filter(carpeta=carpeta)
+    respuestas = Respuesta.objects.filter(carpeta=carpeta)
     cuentas = CuentaPorCobrar.objects.filter(carpeta=carpeta)
     
     # Totales
     total_cobrado = sum(cuenta.cobro for cuenta in cuentas)
     total_saldo = sum(cuenta.saldo for cuenta in cuentas)
+    
+    # Función auxiliar para determinar si la carpeta pertenece a la rama "Informes Periciales Grupo TACAE"
+    def pertenece_informes(carpeta_obj):
+        aux = carpeta_obj
+        while aux is not None:
+            if "informes periciales grupo tacae" in aux.nombre.lower():
+                return True
+            aux = aux.padre
+        return False
 
+    # Flag que indica si la carpeta (o alguno de sus padres) pertenece a "Informes Periciales Grupo TACAE"
+    flag_pertenece_informes = pertenece_informes(carpeta)
+    
     return render(request, 'carpetas/ver_carpeta.html', {
         'carpeta': carpeta,
         'subcarpetas': subcarpetas,
@@ -136,7 +148,9 @@ def ver_carpeta(request, carpeta_id):
         'cxcs': cxcs,
         'cuentas': cuentas,
         'total_cobrado': total_cobrado,
-        'total_saldo': total_saldo
+        'total_saldo': total_saldo,
+        'pertenece_informes': flag_pertenece_informes,
+        'respuestas': respuestas,  # si los necesitas en el template
     })
     
 @login_required
