@@ -5,7 +5,7 @@ from .forms import *
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 import datetime
-
+from django.urls import reverse  
 
 def obtener_todas_subcarpetas(carpeta, visitadas=None):
     """Recupera todas las subcarpetas dentro de una carpeta, sin importar el nivel"""
@@ -601,3 +601,14 @@ def eliminar_banco(request, banco_id):
     banco.delete()
     return redirect('carpetas:ver_carpeta', carpeta_id)
 
+
+def marcar_y_ver_carpeta(request, noti_id):
+    noti = get_object_or_404(Notificacion, id=noti_id, usuario=request.user)
+    noti.leida = True
+    noti.save()
+    # Obtiene ids
+    carpeta_id = noti.proceso.carpeta.id
+    proc_id    = noti.proceso.id
+    # Construye URL /carpetas/ver/<carpeta_id>/#proc-<proc_id>
+    url = reverse('carpetas:ver_carpeta', args=[carpeta_id])
+    return redirect(f"{url}#proc-{proc_id}")

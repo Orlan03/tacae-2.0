@@ -9,22 +9,33 @@
     <img src="{% static 'img/tacae.jpg' %}" alt="TACAE Logo" class="logo">
     <h2>Notificaciones</h2>
   </div>
+
   {% if notificaciones %}
-    <ul class="list-group">
-      {% for noti in notificaciones %}
-        <li class="list-group-item notification-item {% if noti.leida %}read{% else %}unread{% endif %}">
-          <p class="mensaje">{{ noti.mensaje }}</p>
-          <small class="fecha">Creado: {{ noti.fecha_creacion|date:"d/m/Y H:i" }}</small>
+  <ul class="list-group">
+    {% for noti in notificaciones %}
+      {% if noti.tipo == 'limite' and noti.proceso %}
+        <li class="list-group-item list-group-item-action notification-item
+                   {% if noti.leida %}read{% else %}unread{% endif %}">
+          <a href="{% url 'control_procesos:marcar_y_ver_carpeta' noti.id %}"
+             class="stretched-link text-decoration-none">
+            {{ noti.mensaje }}
+          </a>
+          <small class="d-block fecha">Creado: {{ noti.fecha_creacion|date:"d/m/Y H:i" }}</small>
         </li>
-      {% endfor %}
-    </ul>
+      {% else %}
+        {# … resto igual … #}
+      {% endif %}
+    {% endfor %}
+  </ul>
   {% else %}
     <p class="empty-message text-center">No tienes notificaciones nuevas.</p>
   {% endif %}
+
   <div class="text-center mt-3">
     <a href="{% url 'home' %}" class="btn btn-secondary btn-back">Volver al inicio</a>
   </div>
 </div>
+
 
 <style>
   .notificaciones-container {

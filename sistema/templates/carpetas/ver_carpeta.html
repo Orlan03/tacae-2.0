@@ -174,87 +174,105 @@
       {% endif %}
     {% endif %}
   {% endif %}
-  
-  {# Sección de Procesos (solo si el padre es "Procesos Pendientes") #}
   {% if carpeta.padre and carpeta.padre.nombre == "Procesos Pendientes" %}
-    {% if procesos %}
-      <div class="mb-4">
-        <h2 class="h5 text-center">Procesos</h2>
-  
-        {# --- Filtro por Estado --- #}
-        <div class="d-flex justify-content-end mb-2">
-          <label for="filterEstado" class="me-2 fw-bold">Filtrar por estado:</label>
-          <select id="filterEstado" class="form-select w-auto">
-            <option value="">Todos</option>
-            <option value="Hecho">Hecho</option>
-            <option value="Pendiente">Pendiente</option>
-            <option value="Faltan datos">Faltan datos</option>
-          </select>
-        </div>
-  
-        <div class="table-responsive">
-          <table class="table table-bordered table-hover" id="tableProcesos">
-            <thead class="table-dark">
-              <tr>
-                <th>Sorteo</th>
-                <th>Proceso</th>
-                <th>Responsable</th>
-                <th>Calificación</th>
-                <th>Actor</th>
-                <th>Demandado</th>
-                <th>Valor</th>
-                <th>Posesión</th>
-                <th>Fecha de Cumplimiento</th>
-                <th>Fecha de vencimiento</th>
-                <th>Observación</th>
-                <th>Estado de proceso</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for proceso in procesos %}
-                <tr class="
-                  {% if proceso.estado == 'pendiente' %}table-danger
-                  {% elif proceso.estado == 'hecho' %}table-success
-                  {% endif %}">
-                  <td>{{ proceso.sorteo }}</td>
-                  <td>{{ proceso.proceso }}</td>
-                  <td>{{ proceso.responsable }}</td>
-                  <td>{{ proceso.calificacion }}</td>
-                  <td>{{ proceso.actor }}</td>
-                  <td>{{ proceso.demandado }}</td>
-                  <td>{{ proceso.valor }}</td>
-                  <td>{{ proceso.posesion }}</td>
-                  <td>{{ proceso.fecha_cumplimiento }}</td>
-                  <td>{{ proceso.fecha_limite}}</td>
-                  <td>{{ proceso.observaciones }}</td>
-                  <td class="estado-cell">{{ proceso.get_estado_display }}</td>
-                  <td>
-                    <a href="{% url 'control_procesos:editar_proceso' proceso.id %}" class="btn btn-info btn-sm">Editar</a>
-                    <a href="{% url 'control_procesos:eliminar_proceso' proceso.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar este proceso?');">Eliminar</a>
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
+  {% if procesos %}
+    <style>
+      /* Estilos para el select y alineación */
+      .estado-select { min-width: 140px; }
+      #tableProcesos td, #tableProcesos th { vertical-align: middle; }
+    </style>
+
+    <div class="mb-4">
+      <h2 class="h5 text-center">Procesos</h2>
+
+      {# --- Filtro por Estado --- #}
+      <div class="d-flex justify-content-end mb-2">
+        <label for="filterEstado" class="me-2 fw-bold">Filtrar por estado:</label>
+        <select id="filterEstado" class="form-select w-auto">
+          <option value="">Todos</option>
+          <option value="hecho">Hecho</option>
+          <option value="pendiente">Pendiente</option>
+          <option value="faltan_datos">Faltan datos</option>
+        </select>
       </div>
-  
-      {# --- Script de filtrado por Estado --- #}
+
+      <div class="table-responsive">
+        <table id="tableProcesos" class="table table-bordered table-hover">
+          <thead class="table-dark">
+            <tr>
+              <th>Sorteo</th><th>Proceso</th><th>Responsable</th><th>Calificación</th>
+              <th>Actor</th><th>Demandado</th><th>Valor</th><th>Posesión</th>
+              <th>Fecha cumplimiento</th><th>Fecha límite</th>
+              <th>Observación</th><th style="width:160px;">Estado</th><th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for proceso in procesos %}
+              <tr class="
+                {% if proceso.estado == 'pendiente' %}table-danger
+                {% elif proceso.estado == 'hecho' %}table-success
+                {% else %}table-warning{% endif %}">
+                <td>{{ proceso.sorteo }}</td>
+                <td>{{ proceso.proceso }}</td>
+                <td>{{ proceso.responsable }}</td>
+                <td>{{ proceso.calificacion }}</td>
+                <td>{{ proceso.actor }}</td>
+                <td>{{ proceso.demandado }}</td>
+                <td>{{ proceso.valor }}</td>
+                <td>{{ proceso.posesion }}</td>
+                <td>{{ proceso.fecha_cumplimiento }}</td>
+                <td>{{ proceso.fecha_limite }}</td>
+                <td>{{ proceso.observaciones }}</td>
+                <td>
+                  <select class="form-select estado-select estado-select"
+                          data-id="{{ proceso.id }}">
+                    <option value="hecho"     {% if proceso.estado == 'hecho'     %}selected{% endif %}>Hecho</option>
+                    <option value="pendiente" {% if proceso.estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
+                    <option value="faltan_datos" {% if proceso.estado == 'faltan_datos' %}selected{% endif %}>Faltan datos</option>
+                  </select>
+                </td>
+                <td>
+                  <a href="{% url 'control_procesos:editar_proceso' proceso.id %}"
+                     class="btn btn-info btn-sm">Editar</a>
+                  <a href="{% url 'control_procesos:eliminar_proceso' proceso.id %}"
+                     class="btn btn-danger btn-sm"
+                     onclick="return confirm('¿Eliminar este proceso?');">
+                    Eliminar
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
       <script>
+        // Cambia el color de la fila cuando modificas el select
+        document.querySelectorAll('.estado-select').forEach(sel => {
+          sel.addEventListener('change', function() {
+            const row = this.closest('tr');
+            row.classList.remove('table-success','table-danger','table-warning');
+            if (this.value === 'hecho')      row.classList.add('table-success');
+            else if (this.value === 'pendiente') row.classList.add('table-danger');
+            else                               row.classList.add('table-warning');
+            // Aquí podrías llamar a tu AJAX para guardar el cambio
+          });
+        });
+
+        // Filtrado global
         document.getElementById('filterEstado').addEventListener('change', function() {
           const filtro = this.value;
           document.querySelectorAll('#tableProcesos tbody tr').forEach(row => {
-            const estado = row.querySelector('.estado-cell').textContent.trim();
+            const estado = row.querySelector('.estado-select').value;
             row.style.display = (!filtro || estado === filtro) ? '' : 'none';
           });
         });
       </script>
-    {% endif %}
+    </div>
   {% endif %}
-  
-  
-  
+{% endif %}
+
+
   {# Las demás secciones (cuentas, respuestas, sistemas, etc.) se mantienen sin cambios #}
   {% if carpeta.padre and carpeta.padre.nombre|lower == "cuentas por cobrar" %}
   
@@ -333,7 +351,7 @@
                 <tr>
                   <td>{{ proceso.proceso }}</td>
                   <td>{{ proceso.fecha_respuesta }}</td>
-                  <td>{{ proceso.calificación }}</td>
+                  <td>{{ proceso.calificacion }}</td>
                   <td>{{ proceso.fecha_cumplimiento }}</td>
                   <td>{{ proceso.observaciones }}</td>
                   <td>

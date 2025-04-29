@@ -1,5 +1,6 @@
 from django import forms
 from .models import *
+
 class ProcesoForm(forms.ModelForm):
     class Meta:
         model = Proceso
@@ -18,9 +19,9 @@ class ProcesoForm(forms.ModelForm):
             'estado'
         ]
         widgets = {
+            'sorteo':             forms.DateInput(attrs={'type': 'date'}),
             'fecha_cumplimiento': forms.DateInput(attrs={'type': 'date'}),
-            'fecha_limite': forms.DateInput(attrs={'type': 'date'}),
-            'sorteo': forms.DateInput(attrs={'type': 'date'}),
+            'fecha_limite':       forms.DateInput(attrs={'type': 'date'}),
         }
 
         

@@ -21,40 +21,42 @@
 
     <!-- PROCESOS: Solo se muestran si la carpeta pertenece a "Procesos Pendientes" -->
     {% if carpeta.padre and carpeta.padre.nombre == "Procesos Pendientes" %}
-    <div class="process-section">
-        <h3 class="section-title">📄 Procesos Registrados en {{ carpeta.nombre }}</h3>
+  <div class="process-section">
+    <h3 class="section-title">📄 Procesos Registrados en {{ carpeta.nombre }}</h3>
 
-        {% if carpeta.procesos.all %}
-            <table class="table-enhanced">
-                <thead>
-                    <tr>
-                        <th>Proceso</th>
-                        <th>Responsable</th>
-                        <th>Fecha Cumplimiento</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for proceso in carpeta.procesos.all %}
-                        <tr>
-                            <td>{{ proceso.proceso }}</td>
-                            <td>{{ proceso.responsable }}</td>
-                            <td>{{ proceso.fecha_cumplimiento|default:"-" }}</td>
-                            <td>
-                                <a href="#" class="btn-details">Ver Detalles</a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>No hay procesos registrados en esta carpeta.</p>
-        {% endif %}
-
-        <!-- Botón para registrar un nuevo proceso en esta subcarpeta -->
-        <a href="{% url 'procesos:registrar_proceso' carpeta.id %}" class="btn-register">📋 Registrar Nuevo Proceso</a>
-    </div>
+    {% if carpeta.procesos.all %}
+      <table class="table-enhanced" id="tableProcesos">
+        <thead>
+          <tr>
+            <th>Proceso</th>
+            <th>Responsable</th>
+            <th>Fecha Cumplimiento</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for proceso in carpeta.procesos.all %}
+            <!-- Le damos un id único para anclar -->
+            <tr id="proc-{{ proceso.id }}">
+              <td>{{ proceso.proceso }}</td>
+              <td>{{ proceso.responsable }}</td>
+              <td>{{ proceso.fecha_cumplimiento|default:"-" }}</td>
+              <td>
+                <a href="{% url 'control_procesos:ver_proceso' proceso.id %}" class="btn-details">
+                  Ver Detalles
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No hay procesos registrados en esta carpeta.</p>
     {% endif %}
+
+    <a href="{% url 'procesos:registrar_proceso' carpeta.id %}" class="btn-register">📋 Registrar Nuevo Proceso</a>
+  </div>
+{% endif %}
 
     <a href="{% url 'carpetas:listar_carpetas' %}" class="btn-back">⬅ Volver</a>
 </div>

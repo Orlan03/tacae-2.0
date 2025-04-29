@@ -80,9 +80,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'aplicaciones.eventos.context_processors.notificaciones_eventos_context_processor',
-                'aplicaciones.control_procesos.context_processors.procesos_limite_context_processor',
-                'aplicaciones.eventos.context_processors.notificaciones_unificadas_context_processor',
+                'aplicaciones.control_procesos.context_processors.notificaciones_unificadas_context_processor',
                 
             ],
         },
